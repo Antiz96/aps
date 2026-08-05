@@ -13,13 +13,13 @@ pub fn show_help() {
         "  -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)"
     );
     println!(
-        "  -p, --patterns <path>   Path to the pattern list (defaults to `$PWD/patterns.txt` if not set)"
+        "  -p, --patterns <path>   Path to the patterns list (defaults to `$PWD/patterns.txt` if not set)"
     );
     println!(
-        "  -d, --database <path>   Path to the database file (defaults to `$PWD/aps.db` if not set)"
+        "  -d, --database <path>   Path to the database file (defaults to `$PWD/aps.db` if not set, attempts to create it if it does not exist)"
     );
     println!(
-        "  -l, --log <path>        Path to the file to log search results into (instead of displaying them)"
+        "  -l, --log <path>        Path to the logfile to write search results into (instead of displaying them)"
     );
     println!(
         "  -f, --fetch             Fetch new changes in the repo clone before searching for patterns"
