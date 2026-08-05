@@ -3,14 +3,27 @@
 pub fn show_help() {
     println!("APS - AUR Pattern Searcher");
     println!();
-    println!("Requires a bare clone of https://github.com/archlinux/aur");
+    println!("Run the `aps` command to search for given patterns in AUR packages sources.");
     println!();
+    println!("Requires a bare clone of the AUR read-only GitHub mirror:");
     println!("`git clone --bare https://github.com/archlinux/aur.git`");
     println!();
     println!("Options:");
-    println!("  -r, --repo      Path to the https://github.com/archlinux/aur repo clone");
-    println!("  -p, --pattern   Path to the pattern list");
-    println!("  -d, --database  Path to the database file (defaults to `$PWD/aps.db` if not set)");
-    println!("  -h, --help      Display this message");
-    println!("  -V, --version   Display version information");
+    println!(
+        "  -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)"
+    );
+    println!(
+        "  -p, --patterns <path>   Path to the pattern list (defaults to `$PWD/patterns.txt` if not set)"
+    );
+    println!(
+        "  -d, --database <path>   Path to the database file (defaults to `$PWD/aps.db` if not set)"
+    );
+    println!(
+        "  -l, --log <path>        Path to the file to log search results into (instead of displaying them)"
+    );
+    println!(
+        "  -f, --fetch             Fetch new changes in the repo clone before searching for patterns"
+    );
+    println!("  -h, --help              Display this message");
+    println!("  -V, --version           Display version information");
 }
