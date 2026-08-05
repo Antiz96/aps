@@ -1,0 +1,41 @@
+codespell:
+  before_script:
+    - pacman -Syu --needed --noconfirm codespell
+  script:
+    - codespell --enable-colors
+
+markdownlint:
+  before_script:
+    - pacman -Syu --needed --noconfirm markdownlint
+  script:
+    - mdl --style .mdl_style.rb .
+
+shellcheck:
+  before_script:
+    - pacman -Syu --needed --noconfirm shellcheck
+  script:
+    - find . -name '*.sh*' -exec shellcheck --color=always {} +
+
+cargo-fmt:
+  before_script:
+    - pacman -Syu --needed --noconfirm cargo
+  script:
+    - cargo fmt --check
+
+cargo-clippy:
+  before_script:
+    - pacman -Syu --needed --noconfirm cargo
+  script:
+    - cargo clippy --all-targets --all-features -- -D warnings
+
+cargo-test:
+  before_script:
+    - pacman -Syu --needed --noconfirm cargo
+  script:
+    - cargo test
+
+cargo-build:
+  before_script:
+    - pacman -Syu --needed --noconfirm cargo
+  script:
+    - cargo build --release
