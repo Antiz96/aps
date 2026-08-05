@@ -1,8 +1,8 @@
 //! APS - Aur Pattern Searcher
 
 use clap::Parser;
-use std::io::ErrorKind;
 use std::fs::{self, File};
+use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::process;
 
