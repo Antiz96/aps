@@ -8,11 +8,10 @@ mod help;
 mod validate;
 mod version;
 
-// Argument parser
+// Argument definition
 #[derive(Parser)]
 #[command(disable_help_flag = true, disable_version_flag = true)]
 struct Args {
-    // Options / flags
     #[arg(short = 'r', long, default_value = "aur.git")]
     repo: PathBuf,
 
@@ -54,21 +53,21 @@ fn main() {
     // Set repo path and validate it
     let repo_path = args.repo;
     validate::validate_repo(&repo_path).unwrap_or_else(|error| {
-        eprintln!("{error}");
+        eprintln!("Error: {error:?}");
         process::exit(1);
     });
 
     // Set patterns path and validate it
     let patterns_path = args.patterns;
     validate::validate_patterns(&patterns_path).unwrap_or_else(|error| {
-        eprintln!("{error}");
+        eprintln!("Error: {error:?}");
         process::exit(2);
     });
 
     // Set db path and validate it
     let db_path = args.database;
     validate::validate_db(&db_path).unwrap_or_else(|error| {
-        eprintln!("{error}");
+        eprintln!("Error: {error:?}");
         process::exit(3);
     });
 }

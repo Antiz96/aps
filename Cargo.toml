@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow = "1.0.104"
 clap = { version = "4.6.5", features = ["derive"] }
+gix = "0.86.0"
 
 [dev-dependencies]
 assert_cmd = "2.2.2"
