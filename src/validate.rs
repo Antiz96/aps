@@ -1,35 +1,44 @@
-//! Validate the require repo, patterns and db paths
+//! Validate the required paths parameters
 
-// Return an error if the repo path does not exists, is not readable or if any other errors was
-// encountered
-pub fn validate_repo_path(repo_path: &Path) -> io::Result<()> {
-    fs::read_dir(&repo_path).unwrap_or_else(|error| {
-        if error.kind() == ErrorKind::NotFound {
-            return Err(Error::other(format!("{} - {error}", repo_path.display())));
-        } else if error.kind() == ErrorKind::PermissionDenied {
-            return Err(Error::other(format!("{} - {error}", repo_path.display())));
-        } else {
-            return Err(Error::other(format!("{} - {error}", repo_path.display())));
-        }
-    });
+use std::fs::{self, File};
+use std::io::{self, Error, ErrorKind};
+use std::path::Path;
 
-    // Check if patterns path exists and is readable
-    // Exit in error otherwise
-    File::open(&patterns_path).unwrap_or_else(|error| {
-        if error.kind() == ErrorKind::NotFound {
-            eprintln!(
-                "Error: Patterns file not found\n{} - {error}",
-                patterns_path.display()
-            );
-            process::exit(1);
-        } else if error.kind() == ErrorKind::PermissionDenied {
-            eprintln!(
-                "Error: Patterns file not readable\n{} - {error}",
-                patterns_path.display()
-            );
-            process::exit(1);
-        } else {
-            eprintln!("Error:\n{} - {error}", patterns_path.display());
-            process::exit(1);
-        }
-    });
+// Check if the repo dir exists and is readable
+// Return an error otherwise
+pub fn validate_repo(repo_path: &Path) -> io::Result<()> {
+    fs::read_dir(repo_path)
+        .map_err(|error| Error::new(error.kind(), format!("{} - {error}", repo_path.display())))?;
+
+    Ok(())
+}
+
+// Check if the patterns file exists and is readable
+// Return an error otherwise
+pub fn validate_patterns(patterns_path: &Path) -> io::Result<()> {
+    File::open(patterns_path).map_err(|error| {
+        Error::new(
+            error.kind(),
+            format!("{} - {error}", patterns_path.display()),
+        )
+    })?;
+
+    Ok(())
+}
+
+// Check if the db file exists and is readable
+// Try to create it if it doesn't exist
+// Return an error otherwise
+pub fn validate_db(db_path: &Path) -> io::Result<()> {
+    File::open(db_path)
+        .or_else(|error| {
+            if error.kind() == ErrorKind::NotFound {
+                File::create(db_path)
+            } else {
+                Err(error)
+            }
+        })
+        .map_err(|error| Error::new(error.kind(), format!("{} - {error}", db_path.display())))?;
+
+    Ok(())
+}

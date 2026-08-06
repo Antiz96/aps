@@ -1,12 +1,11 @@
 //! APS - Aur Pattern Searcher
 
 use clap::Parser;
-use std::fs::{self, File};
-use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::process;
 
 mod help;
+mod validate;
 mod version;
 
 // Argument parser
@@ -54,41 +53,22 @@ fn main() {
 
     // Set repo path and validate it
     let repo_path = args.repo;
-    fs::read_dir(&repo_path).unwrap_or_else(|error| {
-        eprintln!(
-            "Error when validating repository clone: {} - {error}",
-            repo_path.display()
-        );
+    validate::validate_repo(&repo_path).unwrap_or_else(|error| {
+        eprintln!("{error}");
         process::exit(1);
     });
 
     // Set patterns path and validate it
     let patterns_path = args.patterns;
-    File::open(&patterns_path).unwrap_or_else(|error| {
-        eprintln!(
-            "Error when validating patterns file: {} - {error}",
-            patterns_path.display()
-        );
-        process::exit(1);
+    validate::validate_patterns(&patterns_path).unwrap_or_else(|error| {
+        eprintln!("{error}");
+        process::exit(2);
     });
 
     // Set db path and validate it
     let db_path = args.database;
-    File::open(&db_path).unwrap_or_else(|error| {
-        if error.kind() == ErrorKind::NotFound {
-            File::create(&db_path).unwrap_or_else(|error| {
-                eprintln!(
-                    "Error when creating database file: {} - {error}",
-                    db_path.display()
-                );
-                process::exit(1);
-            })
-        } else {
-            eprintln!(
-                "Error when validating database file: {} - {error}",
-                db_path.display()
-            );
-            process::exit(1);
-        }
+    validate::validate_db(&db_path).unwrap_or_else(|error| {
+        eprintln!("{error}");
+        process::exit(3);
     });
 }
