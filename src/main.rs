@@ -8,7 +8,7 @@ mod help;
 mod validate;
 mod version;
 
-// Argument definition
+// Arguments definition
 #[derive(Parser)]
 #[command(disable_help_flag = true, disable_version_flag = true)]
 struct Args {

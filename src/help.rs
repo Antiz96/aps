@@ -5,7 +5,8 @@ pub fn show_help() {
     println!();
     println!("Run the `aps` command to search for given patterns in AUR packages sources.");
     println!();
-    println!("Requires a bare clone of the AUR read-only GitHub mirror:");
+    println!("It requires a clone of the AUR read-only GitHub mirror.");
+    println!("A bare clone is recommended for optimal scanning performance:");
     println!("`git clone --bare https://github.com/archlinux/aur.git`");
     println!();
     println!("Options:");
