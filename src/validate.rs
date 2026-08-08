@@ -8,7 +8,7 @@ use std::path::Path;
 pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
     fs::read_dir(repo_path).with_context(|| {
         format!(
-            "Unable to access the \"{}\" repository",
+            "Unable to access the {} repository",
             repo_path.display()
         )
     })?;
@@ -22,7 +22,7 @@ pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
 pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<()> {
     let file_content = fs::read_to_string(patterns_path).with_context(|| {
         format!(
-            "Unable to access the \"{}\" patterns file",
+            "Unable to access the {} patterns file",
             patterns_path.display()
         )
     })?;
@@ -32,7 +32,7 @@ pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<()> {
             let line = line.trim();
             !line.is_empty() && !line.starts_with('#')
         }),
-        "The \"{}\" patterns file is empty or contains no patterns",
+        "The {} patterns file is empty or contains no valid patterns",
         patterns_path.display()
     );
 
@@ -50,7 +50,7 @@ pub fn validate_db(db_path: &Path) -> anyhow::Result<()> {
         .open(db_path)
         .with_context(|| {
             format!(
-                "Unable to access or create the \"{}\" database file",
+                "Unable to access or create the {} database file",
                 db_path.display()
             )
         })?;
