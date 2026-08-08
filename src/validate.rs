@@ -6,12 +6,8 @@ use std::path::Path;
 
 // Check if the repo dir exists, is readable and is a git repo
 pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
-    fs::read_dir(repo_path).with_context(|| {
-        format!(
-            "Unable to access the {} repository",
-            repo_path.display()
-        )
-    })?;
+    fs::read_dir(repo_path)
+        .with_context(|| format!("Unable to access the {} repository", repo_path.display()))?;
 
     gix::open(repo_path)?;
 
