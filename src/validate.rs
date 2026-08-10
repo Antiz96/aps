@@ -7,7 +7,7 @@ use std::path::Path;
 // Check if the repo dir exists, is readable and is a git repo
 pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
     fs::read_dir(repo_path)
-        .with_context(|| format!("Unable to access the {} repository", repo_path.display()))?;
+        .with_context(|| format!("Failed to access the {} repository", repo_path.display()))?;
 
     gix::open(repo_path)?;
 
@@ -18,7 +18,7 @@ pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
 pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<()> {
     let file_content = fs::read_to_string(patterns_path).with_context(|| {
         format!(
-            "Unable to access the {} patterns file",
+            "Failed to access the {} patterns file",
             patterns_path.display()
         )
     })?;
@@ -46,7 +46,7 @@ pub fn validate_db(db_path: &Path) -> anyhow::Result<()> {
         .open(db_path)
         .with_context(|| {
             format!(
-                "Unable to access or create the {} database file",
+                "Failed to access or create the {} database file",
                 db_path.display()
             )
         })?;
