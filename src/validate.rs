@@ -5,13 +5,13 @@ use std::fs::{self, OpenOptions};
 use std::path::Path;
 
 // Check if the repo dir exists, is readable and is a git repo
-pub fn validate_repo(repo_path: &Path) -> anyhow::Result<()> {
+pub fn validate_repo(repo_path: &Path) -> anyhow::Result<gix::Repository> {
     fs::read_dir(repo_path)
         .with_context(|| format!("Failed to access the {} repository", repo_path.display()))?;
 
-    gix::open(repo_path)?;
+    let repo = gix::open(repo_path)?;
 
-    Ok(())
+    Ok(repo)
 }
 
 // Check if the patterns file exists, is readable and isn't empty

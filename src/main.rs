@@ -4,6 +4,7 @@ use clap::Parser;
 use std::path::PathBuf;
 use std::process;
 
+mod fetch;
 mod help;
 mod validate;
 mod version;
@@ -49,7 +50,7 @@ fn main() {
 
     // Set repo path and validate it
     let repo_path = args.repo;
-    validate::validate_repo(&repo_path).unwrap_or_else(|error| {
+    let repo = validate::validate_repo(&repo_path).unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(1);
     });
@@ -67,4 +68,13 @@ fn main() {
         eprintln!("Error: {error:?}");
         process::exit(3);
     });
+
+    // Fetch new changes in the git repo if the -f / --fetch option is passed
+    if args.fetch {
+        println!("Fetching new changes from the remote repository\nThis might take time...\n");
+        fetch::fetch_repo(&repo).unwrap_or_else(|error| {
+            eprintln!("Error: {error:?}");
+            process::exit(4);
+        });
+    }
 }
