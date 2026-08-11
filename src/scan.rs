@@ -131,7 +131,7 @@ fn scan_tree(
                 }
             }
 
-            // Ignore other eventual git tree entry types (e.g. submodules, which *shoudln't* be
+            // Ignore other eventual git tree entry types (e.g. submodules, which *shouldn't* be
             // present in AUR repo as well but hey...)
             _ => {}
         }
