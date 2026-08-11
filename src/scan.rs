@@ -1,6 +1,7 @@
 //! Scan repository for matching patterns
 
 use anyhow::Context;
+use std::collections::HashSet;
 use std::str;
 
 // Match fields
@@ -11,7 +12,11 @@ pub struct Match {
     pub pattern: String,
 }
 
-pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<Vec<Match>> {
+pub fn scan_repo(
+    repo: &gix::Repository,
+    pkgbases: &HashSet<String>,
+    patterns: &[String],
+) -> anyhow::Result<Vec<Match>> {
     // Match vector
     let mut matches = Vec::new();
 
@@ -36,6 +41,11 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<
 
         // Extract package name from the ref (one branch per pkg, so "refs/heads/<pkgname>")
         let package = String::from_utf8_lossy(&ref_name[b"refs/heads/".len()..]).into_owned();
+
+        // Exclude packages that have been deleted (or actually unreferenced) from the AUR
+        if !pkgbases.contains(&package) {
+            continue;
+        }
 
         // Skip branches that have no commits
         // Here again, there's little to no chance that this check is needed but it's cheap and

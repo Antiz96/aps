@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::process;
 
+mod aur_pkgbases;
 mod fetch;
 mod help;
 mod scan;
@@ -71,10 +72,16 @@ fn main() {
         });
     }
 
-    // Scan repo for matching patterns
-    let matches = scan::scan_repo(&repo, &patterns).unwrap_or_else(|error| {
+    // Get the current list of AUR pkgbases
+    let pkgbases = aur_pkgbases::current_pkgbases().unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(4);
+    });
+
+    // Scan repo for matching patterns
+    let matches = scan::scan_repo(&repo, &pkgbases, &patterns).unwrap_or_else(|error| {
+        eprintln!("Error: {error:?}");
+        process::exit(5);
     });
 
     // Group matches by pattern and package
