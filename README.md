@@ -4,6 +4,8 @@ AUR Pattern Searcher
 
 ## Description
 
+An tool allowing to search for specific patterns through the AUR package sources. Useful to get fast, automated and pro-active reports of the presence of knowingly suspicious / malicious patterns in AUR package sources.
+
 ## Installation
 
 ### Pre-compiled binary
@@ -25,7 +27,7 @@ sha256sum target/x86_64-unknown-linux-musl/release/aps
 
 Then, compare the sha256 hash of the built binary to the one of the pre-compiled release binary (which is also recorded in the `aps-<release_version>-x86_64.sha256` file in the release artifacts). Both hashes should be equal, indicating that the binary has been successfully reproduced.
 
-Each release artifacts are also cryptographically signed with the [`FDC3040B92ACA748`](https://keyserver.ubuntu.com/pks/lookup?search=FDC3040B92ACA748&fingerprint=on&op=index), with the detached signature for each artifacts distributed as `<asset_name>.asc`.
+Each release artifacts are also cryptographically signed from the [`FDC3040B92ACA748`](https://keyserver.ubuntu.com/pks/lookup?search=FDC3040B92ACA748&fingerprint=on&op=index) OpenPGP key, with the detached signature for each artifacts distributed as `<asset_name>.asc`.
 
 ### Build from source
 
@@ -59,5 +61,6 @@ Options:
 
 ## Periodic public reports
 
-A period run of `aps` (once per hour) is executed on my own infrastructure, searching for the patterns listed in the [patterns.txt file from this repo](https://gitlab.archlinux.org/antiz/aps/-/blob/main/patterns.txt) (feel free to open a merge requests to add patterns).  
-Results are served at <https://aps.antiz.fr>.
+A periodic run of `aps` (once per hour) is executed on my own infrastructure, searching for the patterns listed in the [patterns.txt file](https://gitlab.archlinux.org/antiz/aps/-/blob/main/patterns.txt) from this repo (feel free to open a merge requests to add patterns).
+
+Scan results are served at <https://aps.antiz.fr>.
