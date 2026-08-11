@@ -23,7 +23,7 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> Result<Vec<Matc
         if !name.starts_with(b"refs/heads/") {
             continue;
         }
-        
+
         let package = String::from_utf8_lossy(&name[b"refs/heads/".len()..]).into_owned();
 
         let Some(commit_id) = reference.try_id() else {
@@ -38,14 +38,7 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> Result<Vec<Matc
             .tree()
             .with_context(|| format!("Failed to get tree for package {package}"))?;
 
-        scan_tree(
-            repo,
-            &tree,
-            &package,
-            "",
-            patterns,
-            &mut matches,
-        )?;
+        scan_tree(repo, &tree, &package, "", patterns, &mut matches)?;
     }
 
     Ok(matches)
@@ -76,14 +69,7 @@ fn scan_tree(
                     .find_tree(entry.object_id())
                     .with_context(|| format!("Failed to read tree {entry_path}"))?;
 
-                scan_tree(
-                    repo,
-                    &subtree,
-                    package,
-                    &entry_path,
-                    patterns,
-                    matches,
-                )?;
+                scan_tree(repo, &subtree, package, &entry_path, patterns, matches)?;
             }
 
             gix::object::tree::EntryKind::Blob => {

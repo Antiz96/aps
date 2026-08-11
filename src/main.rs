@@ -1,6 +1,7 @@
 //! APS - Aur Pattern Searcher
 
 use clap::Parser;
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::process;
 
@@ -76,11 +77,29 @@ fn main() {
         process::exit(4);
     });
 
-    // Print result
-    for matched in matches {
-        println!(
-            "{}: {}:{}: {}",
-            matched.package, matched.path, matched.line, matched.pattern
-        );
+    // Group matches by pattern and package
+    let mut grouped_matches: BTreeMap<&str, BTreeMap<&str, Vec<&scan::Match>>> = BTreeMap::new();
+
+    for matched in &matches {
+        grouped_matches
+            .entry(&matched.pattern)
+            .or_default()
+            .entry(&matched.package)
+            .or_default()
+            .push(matched);
+    }
+
+    // Print results grouped by pattern and package
+    for (pattern, packages) in grouped_matches {
+        for (package, matches) in packages {
+            println!("{pattern}:");
+            println!("  https://aur.archlinux.org/packages/{package}");
+
+            for matched in matches {
+                println!("    {}:{}", matched.path, matched.line);
+            }
+            println!();
+        }
+        println!();
     }
 }

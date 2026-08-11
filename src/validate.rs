@@ -1,7 +1,7 @@
 //! Validate the required paths parameters
 
 use anyhow::Context;
-use std::fs::{self, OpenOptions};
+use std::fs;
 use std::path::Path;
 
 // Check if the repo dir exists, is readable and is a git repo
@@ -37,23 +37,4 @@ pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<Vec<String>> {
     );
 
     Ok(patterns)
-}
-
-// Check if the db file exists and is readable
-// Try to create it if it doesn't exist
-pub fn validate_db(db_path: &Path) -> anyhow::Result<()> {
-    OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(db_path)
-        .with_context(|| {
-            format!(
-                "Failed to access or create the {} database file",
-                db_path.display()
-            )
-        })?;
-
-    Ok(())
 }
