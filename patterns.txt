@@ -1,0 +1,25 @@
+# Suspicious patterns
+base64
+sudo
+| bash
+
+# Malicious binary names used during recent attack waves
+optimizer
+linter
+minifier
+hasher
+converter
+indexer
+encryptor
+checker
+tagger
+parser
+preprocessor
+generator
+validator
+assembler
+packer
+compressor
+serializer
+migrator
+merger
