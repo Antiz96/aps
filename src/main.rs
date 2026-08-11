@@ -21,9 +21,6 @@ struct Args {
     #[arg(short = 'd', long, default_value = "aps.db")]
     database: PathBuf,
 
-    #[arg(short = 'l', long)]
-    log: Option<PathBuf>,
-
     #[arg(short = 'f', long)]
     fetch: bool,
 
