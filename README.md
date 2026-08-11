@@ -15,7 +15,7 @@ The build environment is created and fully documented via [repro-env](https://gi
 
 To reproduce the pre-compiled binary for a given release, [install repro-env](https://github.com/kpcyrd/repro-env#download) and run the following:
 
-```
+```bash
 git clone https://gitlab.archlinux.org/antiz/aps.git
 cd aps
 git checkout <tag> # Where <tag> is the git tag for the targeted release, e.g. "v1.0.0"
@@ -27,7 +27,7 @@ Then, compare the sha256 hash of the built binary to the one of the pre-compiled
 
 ### Build from source
 
-```
+```bash
 git clone https://gitlab.archlinux.org/antiz/aps.git
 cd aps
 cargo build --release
@@ -46,12 +46,14 @@ A bare clone is recommended for optimal scanning performance:
 Search patterns are read from a given file, one pattern per line.  
 Lines starting with `#` are ignored.
 
-Options:  
-  -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)  
-  -p, --patterns <path>   Path to the patterns file list (defaults to `$PWD/patterns.txt` if not set)  
-  -f, --fetch             Fetch new changes in the repo clone before searching for patterns  
-  -h, --help              Display this message  
+```text
+Options:
+  -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)
+  -p, --patterns <path>   Path to the patterns file list (defaults to `$PWD/patterns.txt` if not set)
+  -f, --fetch             Fetch new changes in the repo clone before searching for patterns
+  -h, --help              Display this message
   -V, --version           Display version information
+```
 
 ## Periodic public reports
 
