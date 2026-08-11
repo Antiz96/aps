@@ -62,12 +62,12 @@ fn main() {
         process::exit(2);
     });
 
-    // Fetch new changes in the git repo if the -f / --fetch option is passed
+    // Fetch new changes in the repo if the -f / --fetch option is passed
     if args.fetch {
         println!("Fetching new changes from the remote repository\nThis might take time...\n");
         fetch::fetch_repo(&repo).unwrap_or_else(|error| {
             eprintln!("Error: {error:?}");
-            process::exit(4);
+            process::exit(3);
         });
     }
 
