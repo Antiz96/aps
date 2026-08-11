@@ -6,6 +6,7 @@ use std::process;
 
 mod fetch;
 mod help;
+mod scan;
 mod validate;
 mod version;
 
@@ -48,25 +49,16 @@ fn main() {
         return;
     }
 
-    // Set repo path and validate it
-    let repo_path = args.repo;
-    let repo = validate::validate_repo(&repo_path).unwrap_or_else(|error| {
+    // Validate and set repo
+    let repo = validate::validate_repo(&args.repo).unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(1);
     });
 
-    // Set patterns path and validate it
-    let patterns_path = args.patterns;
-    validate::validate_patterns(&patterns_path).unwrap_or_else(|error| {
+    // Validate and set patterns
+    let patterns = validate::validate_patterns(&args.patterns).unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(2);
-    });
-
-    // Set db path and validate it
-    let db_path = args.database;
-    validate::validate_db(&db_path).unwrap_or_else(|error| {
-        eprintln!("Error: {error:?}");
-        process::exit(3);
     });
 
     // Fetch new changes in the git repo if the -f / --fetch option is passed
@@ -76,5 +68,19 @@ fn main() {
             eprintln!("Error: {error:?}");
             process::exit(4);
         });
+    }
+
+    // Scan repo for matching patterns
+    let matches = scan::scan_repo(&repo, &patterns).unwrap_or_else(|error| {
+        eprintln!("Error: {error:?}");
+        process::exit(4);
+    });
+
+    // Print result
+    for matched in matches {
+        println!(
+            "{}: {}:{}: {}",
+            matched.package, matched.path, matched.line, matched.pattern
+        );
     }
 }

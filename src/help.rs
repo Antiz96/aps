@@ -17,9 +17,6 @@ pub fn show_help() {
         "  -p, --patterns <path>   Path to the patterns list (defaults to `$PWD/patterns.txt` if not set)"
     );
     println!(
-        "  -d, --database <path>   Path to the database file (defaults to `$PWD/aps.db` if not set, attempts to create it if it does not exist)"
-    );
-    println!(
         "  -f, --fetch             Fetch new changes in the repo clone before searching for patterns"
     );
     println!("  -h, --help              Display this message");

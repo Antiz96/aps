@@ -15,7 +15,7 @@ pub fn validate_repo(repo_path: &Path) -> anyhow::Result<gix::Repository> {
 }
 
 // Check if the patterns file exists, is readable and isn't empty
-pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<()> {
+pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<Vec<String>> {
     let file_content = fs::read_to_string(patterns_path).with_context(|| {
         format!(
             "Failed to access the {} patterns file",
@@ -23,16 +23,20 @@ pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<()> {
         )
     })?;
 
+    let patterns = file_content
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty() && !line.starts_with('#'))
+        .map(String::from)
+        .collect::<Vec<_>>();
+
     anyhow::ensure!(
-        file_content.lines().any(|line| {
-            let line = line.trim();
-            !line.is_empty() && !line.starts_with('#')
-        }),
+        !patterns.is_empty(),
         "The {} patterns file is empty or contains no valid patterns",
         patterns_path.display()
     );
 
-    Ok(())
+    Ok(patterns)
 }
 
 // Check if the db file exists and is readable
