@@ -1,7 +1,6 @@
-//! Scan repository for matchin patterns
+//! Scan repository for matching patterns
 
 use anyhow::Context;
-use gix::object::tree::
 use std::str;
 
 // Match fields
@@ -22,16 +21,16 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<
         .context("Failed to access Git references")?
         .all()?
     {
-        // Hack to covert gix error into anyhow type
+        // Convert gix error into anyhow type
         let reference = reference.map_err(anyhow::Error::msg)?;
 
-        // Convert to byte-string to match gix expectation 
+        // Convert to byte-string to match gix expectation
         let ref_name = reference.name().as_bstr();
 
         // Skip potential refs that aren't branches / heads (e.g. "refs/tags/...")
         // The AUR repo has one branch per package, no other refs type, so this check is technically
         // not needed but it's cheap and future proof
-        if !name.starts_with(b"refs/heads/") {
+        if !ref_name.starts_with(b"refs/heads/") {
             continue;
         }
 
@@ -50,13 +49,13 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<
             .find_commit(commit_id)
             .with_context(|| format!("Failed to find commit for package {package}"))?;
 
-        // Load file tree for commit 
-        let file_tree = commit
+        // Load tree from commit
+        let tree = commit
             .tree()
             .with_context(|| format!("Failed to get tree for package {package}"))?;
 
         // Scan file tree for matching patterns
-        scan_tree(repo, &file_tree, &package, "", patterns, &mut matches)?;
+        scan_tree(repo, &tree, &package, "", patterns, &mut matches)?;
     }
 
     Ok(matches)
@@ -64,18 +63,18 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<
 
 fn scan_tree(
     repo: &gix::Repository,
-    file_tree: &gix::Tree,
+    tree: &gix::Tree,
     package: &str,
     path: &str,
     patterns: &[String],
     matches: &mut Vec<Match>,
-) -> Result<()> {
+) -> anyhow::Result<()> {
     // Iterate over the file tree
-    for file in file_tree.iter() {
-        let file = file.context("Failed to read tree entry")?;
+    for entry in tree.iter() {
+        let entry = entry.context("Failed to read tree entry")?;
 
         // Extract and convert filename to string
-        let file_name = String::from(file.filename());
+        let entry_name = entry.filename().to_string();
 
         // Construct file path
         let entry_path = if path.is_empty() {
@@ -86,10 +85,9 @@ fn scan_tree(
 
         // Determine git object kind (tree / directory or blob / file)
         match entry.mode().kind() {
-
             // If git object is a tree / directory, then recusirvely browse it (by recalling the
-            // scan tree function) until we find a blob / file)
-            EntryKind::Tree => {
+            // scan_tree function) until we reach blobs / files
+            gix::object::tree::EntryKind::Tree => {
                 let subtree = repo
                     .find_tree(entry.object_id())
                     .with_context(|| format!("Failed to read tree {entry_path}"))?;
@@ -98,7 +96,7 @@ fn scan_tree(
             }
 
             // If git object is a blob / file, load its content
-            EntryKind::Blob => {
+            gix::object::tree::EntryKind::Blob => {
                 let blob = repo
                     .find_blob(entry.object_id())
                     .with_context(|| format!("Failed to read file {entry_path}"))?;
@@ -125,8 +123,7 @@ fn scan_tree(
 
             // Ignore other eventual git tree entry types (e.g. submodules, which *shoudln't* be
             // present in AUR repo as well but hey...)
-            _ => {
-            }
+            _ => {}
         }
     }
 
