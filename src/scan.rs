@@ -1,6 +1,10 @@
-use anyhow::{Context, Result};
+//! Scan repository for matchin patterns
+
+use anyhow::Context;
+use gix::object::tree::
 use std::str;
 
+// Match fields
 pub struct Match {
     pub package: String,
     pub path: String,
@@ -8,37 +12,51 @@ pub struct Match {
     pub pattern: String,
 }
 
-pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> Result<Vec<Match>> {
+pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> anyhow::Result<Vec<Match>> {
+    // Match vector
     let mut matches = Vec::new();
 
+    // Get all git refs
     for reference in repo
         .references()
         .context("Failed to access Git references")?
         .all()?
     {
+        // Hack to covert gix error into anyhow type
         let reference = reference.map_err(anyhow::Error::msg)?;
 
-        let name = reference.name().as_bstr();
+        // Convert to byte-string to match gix expectation 
+        let ref_name = reference.name().as_bstr();
 
+        // Skip potential refs that aren't branches / heads (e.g. "refs/tags/...")
+        // The AUR repo has one branch per package, no other refs type, so this check is technically
+        // not needed but it's cheap and future proof
         if !name.starts_with(b"refs/heads/") {
             continue;
         }
 
-        let package = String::from_utf8_lossy(&name[b"refs/heads/".len()..]).into_owned();
+        // Extract package name from the ref (one branch per pkg, so "refs/heads/<pkgname>")
+        let package = String::from_utf8_lossy(&ref_name[b"refs/heads/".len()..]).into_owned();
 
+        // Skip branches that have no commits
+        // Here again, there's little to no chance that this check is needed but it's cheap and
+        // future proof
         let Some(commit_id) = reference.try_id() else {
             continue;
         };
 
+        // Load commit object
         let commit = repo
             .find_commit(commit_id)
             .with_context(|| format!("Failed to find commit for package {package}"))?;
 
-        let tree = commit
+        // Load file tree for commit 
+        let file_tree = commit
             .tree()
             .with_context(|| format!("Failed to get tree for package {package}"))?;
 
-        scan_tree(repo, &tree, &package, "", patterns, &mut matches)?;
+        // Scan file tree for matching patterns
+        scan_tree(repo, &file_tree, &package, "", patterns, &mut matches)?;
     }
 
     Ok(matches)
@@ -46,25 +64,32 @@ pub fn scan_repo(repo: &gix::Repository, patterns: &[String]) -> Result<Vec<Matc
 
 fn scan_tree(
     repo: &gix::Repository,
-    tree: &gix::Tree,
+    file_tree: &gix::Tree,
     package: &str,
     path: &str,
     patterns: &[String],
     matches: &mut Vec<Match>,
 ) -> Result<()> {
-    for entry in tree.iter() {
-        let entry = entry.context("Failed to read tree entry")?;
+    // Iterate over the file tree
+    for file in file_tree.iter() {
+        let file = file.context("Failed to read tree entry")?;
 
-        let entry_name = entry.filename().to_string();
+        // Extract and convert filename to string
+        let file_name = String::from(file.filename());
 
+        // Construct file path
         let entry_path = if path.is_empty() {
             entry_name.clone()
         } else {
             format!("{path}/{entry_name}")
         };
 
+        // Determine git object kind (tree / directory or blob / file)
         match entry.mode().kind() {
-            gix::object::tree::EntryKind::Tree => {
+
+            // If git object is a tree / directory, then recusirvely browse it (by recalling the
+            // scan tree function) until we find a blob / file)
+            EntryKind::Tree => {
                 let subtree = repo
                     .find_tree(entry.object_id())
                     .with_context(|| format!("Failed to read tree {entry_path}"))?;
@@ -72,16 +97,18 @@ fn scan_tree(
                 scan_tree(repo, &subtree, package, &entry_path, patterns, matches)?;
             }
 
-            gix::object::tree::EntryKind::Blob => {
+            // If git object is a blob / file, load its content
+            EntryKind::Blob => {
                 let blob = repo
                     .find_blob(entry.object_id())
                     .with_context(|| format!("Failed to read file {entry_path}"))?;
 
+                // Ignore files which content isn't UTF-8 (e.g. binary files, which *shouldn't* be present in an AUR repo but hey...)
                 let Ok(contents) = str::from_utf8(&blob.data) else {
-                    // Ignore binary files for now.
                     continue;
                 };
 
+                // Iterate over lines and test every patterns, record eventual matches
                 for (line_number, line) in contents.lines().enumerate() {
                     for pattern in patterns {
                         if line.contains(pattern) {
@@ -96,8 +123,9 @@ fn scan_tree(
                 }
             }
 
+            // Ignore other eventual git tree entry types (e.g. submodules, which *shoudln't* be
+            // present in AUR repo as well but hey...)
             _ => {
-                // Ignore other Git tree entry types.
             }
         }
     }

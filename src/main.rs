@@ -79,7 +79,6 @@ fn main() {
 
     // Group matches by pattern and package
     let mut grouped_matches: BTreeMap<&str, BTreeMap<&str, Vec<&scan::Match>>> = BTreeMap::new();
-
     for matched in &matches {
         grouped_matches
             .entry(&matched.pattern)
