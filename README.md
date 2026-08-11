@@ -23,7 +23,9 @@ repro-env build -- cargo build --release --target x86_64-unknown-linux-musl
 sha256sum target/x86_64-unknown-linux-musl/release/aps
 ```
 
-Then, compare the sha256 hash of the built binary to the one of the pre-compiled release binary (which is also recorded in the `aps-<release_version>-x86_64.sha256` file in the release assets). Both hashes should be equal, indicating that the binary has been successfully reproduced.
+Then, compare the sha256 hash of the built binary to the one of the pre-compiled release binary (which is also recorded in the `aps-<release_version>-x86_64.sha256` file in the release artifacts). Both hashes should be equal, indicating that the binary has been successfully reproduced.
+
+Each release artifacts are also cryptographically signed with the [`FDC3040B92ACA748`](https://keyserver.ubuntu.com/pks/lookup?search=FDC3040B92ACA748&fingerprint=on&op=index), with the detached signature for each artifacts distributed as `<asset_name>.asc`.
 
 ### Build from source
 
