@@ -1,4 +1,4 @@
-//! APS - Aur Pattern Searcher
+//! APS - AUR Pattern Searcher
 
 use clap::Parser;
 use std::collections::BTreeMap;
