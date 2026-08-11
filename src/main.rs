@@ -106,6 +106,5 @@ fn main() {
             }
             println!();
         }
-        println!();
     }
 }
