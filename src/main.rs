@@ -81,10 +81,11 @@ fn main() {
 
     // Scan repo for matching patterns
     println!("Scanning repository for matching patterns...\n");
-    let matches = scan::scan_repo(&repo, &pkgbases, &patterns).unwrap_or_else(|error| {
-        eprintln!("Error: {error:?}");
-        process::exit(5);
-    });
+    let matches =
+        scan::scan_repo(&repo, &args.repo, &pkgbases, &patterns).unwrap_or_else(|error| {
+            eprintln!("Error: {error:?}");
+            process::exit(5);
+        });
 
     // Print scan results summary
     println!("Results summary:\n");
