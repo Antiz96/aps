@@ -90,7 +90,7 @@ fn main() {
     println!("Results summary:\n");
     results::summary_results(&patterns, &matches);
 
-    // Print scan detailled summary
+    // Print scan detailed summary
     println!("\nDetailed results:\n");
     results::detailed_results(&patterns, &matches);
 }
