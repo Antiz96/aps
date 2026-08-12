@@ -122,6 +122,10 @@ fn main() {
 
             for matched in matches {
                 println!("    {}:{}", matched.path, matched.line);
+
+                for (line, content) in &matched.context {
+                    println!("      {line}: {content}");
+                }
             }
             println!();
         }

@@ -10,6 +10,7 @@ pub struct Match {
     pub path: String,
     pub line: usize,
     pub pattern: String,
+    pub context: Vec<(usize, String)>,
 }
 
 pub fn scan_repo(
@@ -116,15 +117,32 @@ fn scan_tree(
                     continue;
                 };
 
+                // Vector for the context
+                let lines: Vec<&str> = contents.lines().collect();
+
                 // Iterate over lines and test every patterns, record eventual matches
-                for (line_number, line) in contents.lines().enumerate() {
+                for (line_index, line) in lines.iter().enumerate() {
                     for pattern in patterns {
                         if line.contains(pattern) {
+                            // Build context:
+                            // Include two lines before and two lines after the match.
+                            let line_number = line_index + 1;
+                            let start = line_index.saturating_sub(2);
+                            let end = (line_index + 3).min(lines.len());
+
+                            let context = lines[start..end]
+                                .iter()
+                                .enumerate()
+                                .map(|(index, content)| (start + index + 1, (*content).to_string()))
+                                .collect();
+
+                            // Push results fields
                             matches.push(Match {
                                 package: package.to_string(),
                                 path: entry_path.clone(),
-                                line: line_number + 1,
+                                line: line_number,
                                 pattern: pattern.clone(),
+                                context,
                             });
                         }
                     }
