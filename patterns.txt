@@ -1,25 +1,24 @@
 # Suspicious patterns
 base64
-sudo
 | bash
 
-# Malicious binary names used during recent attack waves
-optimizer
-linter
-minifier
-hasher
-converter
-indexer
-encryptor
-checker
-tagger
-parser
-preprocessor
-generator
-validator
-assembler
-packer
-compressor
-serializer
-migrator
-merger
+# Malicious patterns and binary names used during recent attack waves
+sudo "$srcdir/optimizer"
+sudo "$srcdir/linter"
+sudo "$srcdir/minifier"
+sudo "$srcdir/hasher"
+sudo "$srcdir/converter"
+sudo "$srcdir/indexer"
+sudo "$srcdir/encryptor"
+sudo "$srcdir/checker"
+sudo "$srcdir/tagger"
+sudo "$srcdir/parser"
+sudo "$srcdir/preprocessor"
+sudo "$srcdir/generator"
+sudo "$srcdir/validator"
+sudo "$srcdir/assembler"
+sudo "$srcdir/packer"
+sudo "$srcdir/compressor"
+sudo "$srcdir/serializer"
+sudo "$srcdir/migrator"
+sudo "$srcdir/merger"
