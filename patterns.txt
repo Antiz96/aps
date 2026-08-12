@@ -1,6 +1,6 @@
 # Suspicious patterns
-base64
-| bash
+base64 -d | bash
+base64 --decode | bash
 
 # Malicious patterns and binary names used during recent attack waves
 sudo "$srcdir/optimizer"
