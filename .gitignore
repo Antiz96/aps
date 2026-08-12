@@ -1,1 +1,5 @@
 /target
+aur.git/
+/flamegraph.svg
+/perf.data*
+/profile.json.gz

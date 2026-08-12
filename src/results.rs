@@ -20,7 +20,7 @@ fn group_matches<'a>(
     // Add actual matches
     for matched in matches {
         grouped_matches
-            .entry(&matched.pattern)
+            .entry(patterns[matched.pattern].as_str())
             .or_default()
             .entry(&matched.package)
             .or_default()

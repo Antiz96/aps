@@ -1,15 +1,17 @@
 //! Scan repository for matching patterns
 
+use aho_corasick::{AhoCorasick, PatternID};
 use anyhow::Context;
 use std::collections::HashSet;
 use std::str;
 
 // Match fields
+#[derive(PartialEq, PartialOrd, Eq, Ord)]
 pub struct Match {
     pub package: String,
     pub path: String,
     pub line: usize,
-    pub pattern: String,
+    pub pattern: PatternID,
     pub context: Vec<(usize, String)>,
 }
 
@@ -20,6 +22,8 @@ pub fn scan_repo(
 ) -> anyhow::Result<Vec<Match>> {
     // Match vector
     let mut matches = Vec::new();
+
+    let ac = AhoCorasick::new(patterns)?;
 
     // Get all git refs
     for reference in repo
@@ -66,7 +70,7 @@ pub fn scan_repo(
             .with_context(|| format!("Failed to get tree for package {package}"))?;
 
         // Scan file tree for matching patterns
-        scan_tree(repo, &tree, &package, "", patterns, &mut matches)?;
+        scan_tree(repo, &tree, &package, "", &ac, &mut matches)?;
     }
 
     Ok(matches)
@@ -77,7 +81,7 @@ fn scan_tree(
     tree: &gix::Tree,
     package: &str,
     path: &str,
-    patterns: &[String],
+    ac: &AhoCorasick,
     matches: &mut Vec<Match>,
 ) -> anyhow::Result<()> {
     // Iterate over the file tree
@@ -103,7 +107,7 @@ fn scan_tree(
                     .find_tree(entry.object_id())
                     .with_context(|| format!("Failed to read tree {entry_path}"))?;
 
-                scan_tree(repo, &subtree, package, &entry_path, patterns, matches)?;
+                scan_tree(repo, &subtree, package, &entry_path, ac, matches)?;
             }
 
             // If git object is a blob / file, load its content
@@ -122,29 +126,27 @@ fn scan_tree(
 
                 // Iterate over lines and test every patterns, record eventual matches
                 for (line_index, line) in lines.iter().enumerate() {
-                    for pattern in patterns {
-                        if line.contains(pattern) {
-                            // Build context:
-                            // Include two lines before and two lines after the match.
-                            let line_number = line_index + 1;
-                            let start = line_index.saturating_sub(2);
-                            let end = (line_index + 3).min(lines.len());
+                    for mat in ac.find_iter(line) {
+                        // Build context:
+                        // Include two lines before and two lines after the match.
+                        let line_number = line_index + 1;
+                        let start = line_index.saturating_sub(2);
+                        let end = (line_index + 3).min(lines.len());
 
-                            let context = lines[start..end]
-                                .iter()
-                                .enumerate()
-                                .map(|(index, content)| (start + index + 1, (*content).to_string()))
-                                .collect();
+                        let context = lines[start..end]
+                            .iter()
+                            .enumerate()
+                            .map(|(index, content)| (start + index + 1, (*content).to_string()))
+                            .collect();
 
-                            // Push results fields
-                            matches.push(Match {
-                                package: package.to_string(),
-                                path: entry_path.clone(),
-                                line: line_number,
-                                pattern: pattern.clone(),
-                                context,
-                            });
-                        }
+                        // Push results fields
+                        matches.push(Match {
+                            package: package.to_string(),
+                            path: entry_path.clone(),
+                            line: line_number,
+                            pattern: mat.pattern(),
+                            context,
+                        });
                     }
                 }
             }
