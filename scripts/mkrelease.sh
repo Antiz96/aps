@@ -37,6 +37,7 @@ esac
 # Bump version where necessary
 sed_pattern="${latest_tag//./\\.}" # escape dots
 sed -i "s/version = \"${sed_pattern#v}\"/version = \"${release_tag}\"/g" Cargo.toml
+cargo update
 
 # Build binary
 rm -rf target/
