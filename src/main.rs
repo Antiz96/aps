@@ -1,13 +1,13 @@
 //! APS - AUR Pattern Searcher
 
 use clap::Parser;
-use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::process;
 
 mod aur_pkgbases;
 mod fetch;
 mod help;
+mod results;
 mod scan;
 mod validate;
 mod version;
@@ -86,54 +86,11 @@ fn main() {
         process::exit(5);
     });
 
-    // Group matches by pattern and package
-    let mut grouped_matches: BTreeMap<&str, BTreeMap<&str, Vec<&scan::Match>>> = BTreeMap::new();
-
-    // Add every pattern, even if it has no matches
-    // Needed for the results summary output (to also show patterns with no occurrence found)
-    for pattern in &patterns {
-        grouped_matches.entry(pattern).or_default();
-    }
-
-    // Add actual matches
-    for matched in &matches {
-        grouped_matches
-            .entry(&matched.pattern)
-            .or_default()
-            .entry(&matched.package)
-            .or_default()
-            .push(matched);
-    }
-
-    // Print results summary
-    let pattern_width = grouped_matches
-        .keys()
-        .map(|pattern| pattern.len())
-        .max()
-        .unwrap_or(0);
-
+    // Print scan results summary
     println!("Results summary:\n");
-    for (pattern, packages) in &grouped_matches {
-        let count: usize = packages.values().map(|matches| matches.len()).sum();
+    results::summary_results(&patterns, &matches);
 
-        println!("{pattern:<pattern_width$} : {count} occurrence(s) found");
-    }
-
-    // Print detailed results grouped by pattern and package
-    println!("\nDetailled results:\n");
-    for (pattern, packages) in grouped_matches {
-        for (package, matches) in packages {
-            println!("{pattern}:");
-            println!("  https://aur.archlinux.org/packages/{package}");
-
-            for matched in matches {
-                println!("    {}:{}", matched.path, matched.line);
-
-                for (line, content) in &matched.context {
-                    println!("      {line}: {content}");
-                }
-            }
-            println!();
-        }
-    }
+    // Print scan detailled summary
+    println!("\nDetailed results:\n");
+    results::detailed_results(&patterns, &matches);
 }
