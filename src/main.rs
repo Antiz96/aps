@@ -65,7 +65,7 @@ fn main() {
 
     // Fetch new changes in the repo if the -f / --fetch option is passed
     if args.fetch {
-        println!("Fetching new changes from the remote repository\nThis might take time...\n");
+        println!("Fetching new changes from the remote repository...\n");
         fetch::fetch_repo(&repo).unwrap_or_else(|error| {
             eprintln!("Error: {error:?}");
             process::exit(3);
@@ -73,12 +73,14 @@ fn main() {
     }
 
     // Get the current list of AUR pkgbases
+    println!("Fetching AUR pkgbases list...\n");
     let pkgbases = aur_pkgbases::current_pkgbases().unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(4);
     });
 
     // Scan repo for matching patterns
+    println!("Scanning repository for matching patterns...\n");
     let matches = scan::scan_repo(&repo, &pkgbases, &patterns).unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(5);
