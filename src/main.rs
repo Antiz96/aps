@@ -106,11 +106,17 @@ fn main() {
     }
 
     // Print results summary
+    let pattern_width = grouped_matches
+        .keys()
+        .map(|pattern| pattern.len())
+        .max()
+        .unwrap_or(0);
+
     println!("Results summary:\n");
     for (pattern, packages) in &grouped_matches {
         let count: usize = packages.values().map(|matches| matches.len()).sum();
 
-        println!("{pattern}: {count} occurrence(s) found");
+        println!("{pattern:<pattern_width$} : {count} occurrence(s) found");
     }
 
     // Print detailed results grouped by pattern and package
