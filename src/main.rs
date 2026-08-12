@@ -97,7 +97,16 @@ fn main() {
             .push(matched);
     }
 
-    // Print results grouped by pattern and package
+    // Print results summary
+    println!("Results summary:\n");
+    for (pattern, packages) in &grouped_matches {
+        let count: usize = packages.values().map(|matches| matches.len()).sum();
+
+        println!("{pattern}: {count} occurrence(s) found");
+    }
+
+    // Print detailed results grouped by pattern and package
+    println!("\nDetailled results:\n");
     for (pattern, packages) in grouped_matches {
         for (package, matches) in packages {
             println!("{pattern}:");
