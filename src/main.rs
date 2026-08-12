@@ -88,6 +88,14 @@ fn main() {
 
     // Group matches by pattern and package
     let mut grouped_matches: BTreeMap<&str, BTreeMap<&str, Vec<&scan::Match>>> = BTreeMap::new();
+
+    // Add every pattern, even if it has no matches
+    // Needed for the results summary output (to also show patterns with no occurrence found)
+    for pattern in &patterns {
+        grouped_matches.entry(pattern).or_default();
+    }
+
+    // Add actual matches
     for matched in &matches {
         grouped_matches
             .entry(&matched.pattern)
