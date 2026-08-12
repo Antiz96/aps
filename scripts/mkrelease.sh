@@ -75,6 +75,9 @@ gpg --local-user FDC3040B92ACA748 --armor --detach-sign "target/x86_64-unknown-l
 sha256sum "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64" > "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256"
 gpg --local-user FDC3040B92ACA748 --armor --detach-sign "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256"
 
+# Move artifacts to Download folder (to upload them to the release artifacts)
+cp -v "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64"* ~/Downloads/
+
 # Cleanup
-rm -rf "manora-${release_tag}.tar.gz"* target/
+rm -rf target/
 podman image prune -af
