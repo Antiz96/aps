@@ -74,7 +74,12 @@ fn main() {
 
     // Get the current list of AUR pkgbases
     println!("Fetching AUR pkgbases list...\n");
-    let pkgbases = aur_pkgbases::current_pkgbases().unwrap_or_else(|error| {
+    let pkgbases = if args.fetch {
+        aur_pkgbases::download_pkgbases()
+    } else {
+        aur_pkgbases::get_cached_pkgbases()
+    }
+    .unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(4);
     });
