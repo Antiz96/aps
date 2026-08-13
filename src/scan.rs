@@ -2,6 +2,9 @@
 
 use aho_corasick::{AhoCorasick, PatternID};
 use anyhow::Context;
+use gix::Repository;
+use rayon::prelude::*;
+use std::cell::RefCell;
 use std::collections::HashSet;
 use std::str;
 
@@ -15,63 +18,104 @@ pub struct Match {
     pub context: Vec<(usize, String)>,
 }
 
+fn get_branch_refs(
+    repo: &gix::Repository,
+    pkgbases: &HashSet<String>,
+) -> anyhow::Result<Vec<String>> {
+    Ok(repo
+        .references()
+        .context("Failed to access Git references")?
+        .local_branches()?
+        .filter_map(|reference| {
+            let reference = reference.map_or_else(
+                |error| {
+                    eprintln!("Warning: Failed to access Git reference: {error}");
+                    None
+                },
+                Some,
+            )?;
+
+            // Convert to byte-string to match gix expectation
+            let ref_name = reference.name().as_bstr();
+
+            // Extract package name from the ref (one branch per pkg, so "refs/heads/<pkgname>")
+            let package = &ref_name["refs/heads/".len()..].to_string();
+
+            // Exclude packages that have been deleted (or actually unreferenced) from the AUR
+            if !pkgbases.contains(package) {
+                return None;
+            }
+
+            Some(ref_name.to_string())
+        })
+        .collect())
+}
+
 pub fn scan_repo(
     repo: &gix::Repository,
+    repo_path: &std::path::Path,
     pkgbases: &HashSet<String>,
     patterns: &[String],
 ) -> anyhow::Result<Vec<Match>> {
-    // Match vector
-    let mut matches = Vec::new();
-
     let ac = AhoCorasick::new(patterns)?;
 
-    // Get all git refs
-    for reference in repo
-        .references()
-        .context("Failed to access Git references")?
-        .all()?
-    {
-        // Convert gix error into anyhow type
-        let reference = reference.map_err(anyhow::Error::msg)?;
-
-        // Convert to byte-string to match gix expectation
-        let ref_name = reference.name().as_bstr();
-
-        // Skip potential refs that aren't branches / heads (e.g. "refs/tags/...")
-        // The AUR repo has one branch per package, no other refs type, so this check is technically
-        // not needed but it's cheap and future proof
-        if !ref_name.starts_with(b"refs/heads/") {
-            continue;
-        }
-
-        // Extract package name from the ref (one branch per pkg, so "refs/heads/<pkgname>")
-        let package = String::from_utf8_lossy(&ref_name[b"refs/heads/".len()..]).into_owned();
-
-        // Exclude packages that have been deleted (or actually unreferenced) from the AUR
-        if !pkgbases.contains(&package) {
-            continue;
-        }
-
-        // Skip branches that have no commits
-        // Here again, there's little to no chance that this check is needed but it's cheap and
-        // future proof
-        let Some(commit_id) = reference.try_id() else {
-            continue;
+    // one Repository instance for every thread
+    thread_local! {
+        static REPO: RefCell<Option<Repository>> = const {
+            RefCell::new(None)
         };
-
-        // Load commit object
-        let commit = repo
-            .find_commit(commit_id)
-            .with_context(|| format!("Failed to find commit for package {package}"))?;
-
-        // Load tree from commit
-        let tree = commit
-            .tree()
-            .with_context(|| format!("Failed to get tree for package {package}"))?;
-
-        // Scan file tree for matching patterns
-        scan_tree(repo, &tree, &package, "", &ac, &mut matches)?;
     }
+
+    let names: Vec<String> =
+        get_branch_refs(repo, pkgbases).context("Failed to get valid reference names")?;
+
+    let matches = names
+        .into_par_iter()
+        .filter_map(|ref_name| {
+            REPO.with(|repo| {
+                let mut repo = repo.borrow_mut();
+
+                if repo.is_none() {
+                    // The expectation should be safe: we already validated the repo with
+                    // validate::validate_repo at that point and we don't expect it to be
+                    // altered in a way that it cannot be opened anymore in the mean time
+                    *repo = Some(gix::open(repo_path).expect("Failed to open repository"));
+                }
+
+                let repo = repo.as_ref().unwrap();
+
+                // Resolve reference
+                // Silencing failure should be safe here, refs were already validated by get_branch_refs()
+                let reference = repo.find_reference(&ref_name).ok()?;
+                let id = reference.try_id()?;
+
+                // Load commit
+                // Skip the branch if it cannot be loaded (but warn about it)
+                let commit = repo.find_commit(id).map_or_else(
+                    |error| {
+                        eprintln!("Warning: Failed to load commit for {ref_name}: {error}");
+                        None
+                    },
+                    Some,
+                )?;
+
+                // Load tree from commit
+                // Silencing failure should be safe here, the most probable cause is a missing
+                // commit (resulting in a tree that cannot be loaded), which we already warned about above if needed
+                let tree = commit.tree().ok()?;
+
+                let package = &ref_name["refs/heads/".len()..];
+
+                // Scan file tree for matching patterns
+                let mut matches = Vec::new();
+                // Silencing failure should be safe here, the most probable cause is a missing
+                // commit (resulting in a tree that cannot be loaded), which we already warned about above if needed
+                scan_tree(repo, &tree, package, "", &ac, &mut matches).ok()?;
+                Some(matches)
+            })
+        })
+        .flatten()
+        .collect();
 
     Ok(matches)
 }
