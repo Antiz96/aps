@@ -81,18 +81,14 @@ fn main() {
 
     // Scan repo for matching patterns
     println!("Scanning repository for matching patterns...\n");
-    let mut matches = scan::scan_repo(&repo, &pkgbases, &patterns).unwrap_or_else(|error| {
+    let matches = scan::scan_repo(&repo, &pkgbases, &patterns).unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
         process::exit(5);
     });
-    matches.sort();
 
     // Print scan results summary
     println!("Results summary:\n");
     results::summary_results(&patterns, &matches);
-
-    // scan_repo counts multiple matches on one line separately
-    matches.dedup_by(|a, b| a.package == b.package && a.path == b.path && a.line == b.line);
 
     // Print scan detailed summary
     println!("\nDetailed results:\n");

@@ -6,7 +6,7 @@ use std::collections::HashSet;
 use std::str;
 
 // Match fields
-#[derive(PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Match {
     pub package: String,
     pub path: String,

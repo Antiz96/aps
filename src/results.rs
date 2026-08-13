@@ -52,8 +52,17 @@ pub fn summary_results(patterns: &[String], matches: &[scan::Match]) {
 
 // Print detailed results grouped by pattern and package, including context
 pub fn detailed_results(patterns: &[String], matches: &[scan::Match]) {
+    // Sort matches and deduplicate them
+    // Multiple patterns can match the same line, but the detailed output only needs to show
+    // each matching line and its context once
+    let mut matches = matches.to_vec();
+
+    matches.sort();
+
+    matches.dedup_by(|a, b| a.package == b.package && a.path == b.path && a.line == b.line);
+
     // Populate grouped matches
-    let grouped_matches = group_matches(patterns, matches);
+    let grouped_matches = group_matches(patterns, &matches);
 
     for (pattern, packages) in grouped_matches {
         for (package, matches) in packages {
