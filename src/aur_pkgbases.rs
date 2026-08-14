@@ -6,7 +6,8 @@ use flate2::read::GzDecoder;
 use reqwest::blocking::get;
 use serde::Deserialize;
 use std::collections::HashSet;
-use std::io::{self, Read};
+use std::fs;
+use std::io::Read;
 
 #[derive(Debug, Deserialize)]
 struct PackageMeta {
@@ -14,20 +15,8 @@ struct PackageMeta {
     package_base: String,
 }
 
-fn save_cache(pkgbases: &[String]) -> io::Result<()> {
-    let cache_file_path = "pkgbases.txt";
-    std::fs::write(cache_file_path, pkgbases.join("\n"))
-}
-
-fn load_cache() -> io::Result<HashSet<String>> {
-    let cache_file_path = "pkgbases.txt";
-    let content = std::fs::read_to_string(cache_file_path)?;
-    Ok(content.lines().map(|line| line.to_string()).collect())
-}
-
-/// Download the current AUR package metadata and return the set of
-/// currently existing pkgbases
-pub fn download_pkgbases() -> anyhow::Result<HashSet<String>> {
+// Download the current AUR package metadata and extract the list of pkgbases
+pub fn download_pkgbases() -> anyhow::Result<()> {
     // AUR packages metadata URL
     let url = String::from("https://aur.archlinux.org/packages-meta-v1.json.gz");
 
@@ -59,15 +48,21 @@ pub fn download_pkgbases() -> anyhow::Result<HashSet<String>> {
         .map(|pkgbase| pkgbase.package_base)
         .collect();
 
-    save_cache(&pkgbases).context("Failed to save AUR package metadata cache")?;
+    // Write pkgbases list to disk
+    fs::write("pkgbases.txt", pkgbases.join("\n"))
+        .context("Failed to save AUR package metadata cache")?;
 
-    Ok(pkgbases.into_iter().collect())
+    Ok(())
 }
 
-/// Get the cached AUR pkgbases, or download them if the cache is not available
-pub fn get_cached_pkgbases() -> anyhow::Result<HashSet<String>> {
-    match load_cache() {
-        Ok(pkgbases) => Ok(pkgbases),
-        Err(_) => download_pkgbases(),
-    }
+// Get the cached AUR pkgbases, or download them first if the cache is not available
+pub fn load_pkgbases() -> anyhow::Result<HashSet<String>> {
+    let pkgbases = fs::read_to_string("pkgbases.txt")
+        .context("Failed to read AUR package metadata cache")
+        .or_else(|_| {
+            download_pkgbases()?;
+            fs::read_to_string("pkgbases.txt").context("Failed to read AUR package metadata cache")
+        })?;
+
+    Ok(pkgbases.lines().map(String::from).collect())
 }
