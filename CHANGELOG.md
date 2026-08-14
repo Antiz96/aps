@@ -49,7 +49,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixes
 
-- Improve logging 
+- Improve logging
 
 ## [v1.0.1](https://gitlab.archlinux.org/antiz/aps/-/releases/v1.0.1) - 2026-08-12
 
