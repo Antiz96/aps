@@ -1,7 +1,9 @@
 //! Validate the required paths parameters
 
 use anyhow::Context;
+use std::collections::HashSet;
 use std::fs;
+use std::io::ErrorKind;
 use std::path::Path;
 
 // Check if the repo dir exists, is readable and is a git repo
@@ -37,4 +39,29 @@ pub fn validate_patterns(patterns_path: &Path) -> anyhow::Result<Vec<String>> {
     );
 
     Ok(patterns)
+}
+
+// Check if the pkgbases list exists and isn't empty, set it up for download otherwise
+// Any other error (e.g. "permission denied") are returned.
+pub fn validate_pkgbases(path: &Path) -> anyhow::Result<(HashSet<String>, bool)> {
+    let file_content = match fs::read_to_string(path) {
+        Ok(file_content) => file_content,
+        Err(error) if error.kind() == ErrorKind::NotFound => {
+            return Ok((HashSet::new(), true));
+        }
+        Err(error) => {
+            return Err(error).context("Failed to read AUR package metadata cache");
+        }
+    };
+
+    let pkgbases = file_content
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty() && !line.starts_with('#'))
+        .map(String::from)
+        .collect::<HashSet<_>>();
+
+    let needs_download = pkgbases.is_empty();
+
+    Ok((pkgbases, needs_download))
 }
