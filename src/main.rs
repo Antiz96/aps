@@ -4,9 +4,9 @@ use clap::Parser;
 use std::path::PathBuf;
 use std::process;
 
-mod aur_pkgbases;
 mod fetch;
 mod help;
+mod pkgbases;
 mod results;
 mod scan;
 mod validate;
@@ -22,11 +22,14 @@ struct Args {
     #[arg(short = 'p', long, default_value = "patterns.txt")]
     patterns: PathBuf,
 
-    #[arg(short = 'd', long, default_value = "aps.db")]
-    database: PathBuf,
+    #[arg(short = 'P', long, default_value = "pkgbases.txt")]
+    pkgbases: PathBuf,
 
     #[arg(short = 'f', long)]
     fetch: bool,
+
+    #[arg(short = 'R', long)]
+    refresh_pkgbases: bool,
 
     #[arg(short = 'h', long)]
     help: bool,
@@ -63,34 +66,38 @@ fn main() {
         process::exit(2);
     });
 
+    // Validate and set pkgbases
+    let (mut pkgbases, needs_download) = validate::validate_pkgbases(&args.pkgbases)
+        .unwrap_or_else(|error| {
+            eprintln!("Error: {error:?}");
+            process::exit(3);
+        });
+
     // Fetch new changes in the repo and download / refresh pkgbases list if the -f / --fetch option is passed
     if args.fetch {
         println!("Fetching new changes from the remote repository...\n");
         fetch::fetch_repo(&repo).unwrap_or_else(|error| {
             eprintln!("Error: {error:?}");
-            process::exit(3);
-        });
-
-        println!("Fetching AUR pkgbases list...\n");
-        aur_pkgbases::download_pkgbases().unwrap_or_else(|error| {
-            eprintln!("Error: {error:?}");
             process::exit(4);
         });
     }
 
-    // Load list of AUR pkgbases
-    println!("Loading AUR pkgbases list...\n");
-    let pkgbases = aur_pkgbases::load_pkgbases().unwrap_or_else(|error| {
-        eprintln!("Error: {error:?}");
-        process::exit(5);
-    });
+    // Fetch (or refresh) the list of current AUR pkgbases if the -R / --refresh-pkgbases option is passed
+    // or if the provided list of pkgbases is non-existing / empty
+    if args.refresh_pkgbases || needs_download {
+        println!("Fetching AUR pkgbases list...\n");
+        pkgbases = pkgbases::download_pkgbases(&args.pkgbases).unwrap_or_else(|error| {
+            eprintln!("Error: {error:?}");
+            process::exit(5);
+        });
+    }
 
     // Scan repo for matching patterns
     println!("Scanning repository for matching patterns...\n");
     let matches =
         scan::scan_repo(&repo, &args.repo, &pkgbases, &patterns).unwrap_or_else(|error| {
             eprintln!("Error: {error:?}");
-            process::exit(5);
+            process::exit(6);
         });
 
     // Print scan results summary
