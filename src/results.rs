@@ -64,6 +64,13 @@ pub fn detailed_results(patterns: &[String], matches: &[scan::Match]) {
     // Populate grouped matches
     let grouped_matches = group_matches(patterns, &matches);
 
+    // Print a message if there are no results
+    if grouped_matches.is_empty() {
+        println!("No results found.");
+        return;
+    }
+
+    // Print the detailed results if there are some
     for (pattern, packages) in grouped_matches {
         for (package, matches) in packages {
             println!("{pattern}:");
