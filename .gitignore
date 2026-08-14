@@ -1,5 +1,6 @@
 /target
-aur.git/
+/aur.git
 /flamegraph.svg
 /perf.data*
 /profile.json.gz
+/pkgbases.txt
