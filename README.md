@@ -15,7 +15,7 @@
 APS (**A**UR **P**atterns **S**earcher) is a fast and powerful patterns searcher for AUR package sources.  
 It's a useful tool to get fast, automated and pro-active reports of the presence of knowingly suspicious / malicious patterns in AUR package files.
 
- It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance:  
+It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance:  
 `git clone --bare https://github.com/archlinux/aur.git`.
 
 Search patterns are read from a given file, one pattern per line.  
