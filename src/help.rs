@@ -20,7 +20,7 @@ pub fn show_help() {
         "  -p, --patterns <path>   Path to the patterns list (defaults to `$PWD/patterns.txt` if not set)"
     );
     println!(
-        "  -f, --fetch             Fetch new changes in the repo clone before searching for patterns"
+        "  -f, --fetch             Fetch new changes in the AUR repo clone and update the list of current AUR pkgbases before searching for patterns"
     );
     println!("  -h, --help              Display this message");
     println!("  -V, --version           Display version information");
