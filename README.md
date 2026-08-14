@@ -54,7 +54,11 @@ Lines starting with `#` are ignored.
 Options:
   -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)
   -p, --patterns <path>   Path to the patterns list (defaults to `$PWD/patterns.txt` if not set)
-  -f, --fetch             Fetch new changes in the AUR repo clone and update the list of current AUR pkgbases before searching for patterns
+  -P, --pkgbases <path>   Path to the pkgbases list to search patterns for (defaults to `$PWD/pkgbases.txt` if not set)
+                          If the file doesn't exist (or is empty), it is automatically generated with the full list of the current AUR pkgbases
+  -f, --fetch             Fetch new changes in the AUR repo clone before searching for patterns
+  -R, --refresh-pkgbases  Refresh the pkgbases list with the full list of the current AUR pkgbases before searching for patterns
+                          Note that this option will override the pkgbases list file if it already exists
   -h, --help              Display this message
   -V, --version           Display version information
 ```
