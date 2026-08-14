@@ -41,7 +41,7 @@ To reproduce the pre-compiled binary for a given release, [install repro-env](ht
 ```bash
 git clone https://github.com/Antiz96/aps.git
 cd aps
-git checkout <tag> # Where <tag> is the git tag for the targeted release, e.g. "v1.0.0"
+git checkout <tag> # Where <tag> is the git tag for the targeted release, e.g. "v1.3.0"
 repro-env build -- cargo build --release --target x86_64-unknown-linux-musl
 sha256sum target/x86_64-unknown-linux-musl/release/aps
 ```
