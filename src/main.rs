@@ -63,20 +63,26 @@ fn main() {
         process::exit(2);
     });
 
-    // Fetch new changes in the repo if the -f / --fetch option is passed
+    // Fetch new changes in the repo and download / refresh pkgbases list if the -f / --fetch option is passed
     if args.fetch {
         println!("Fetching new changes from the remote repository...\n");
         fetch::fetch_repo(&repo).unwrap_or_else(|error| {
             eprintln!("Error: {error:?}");
             process::exit(3);
         });
+
+        println!("Fetching AUR pkgbases list...\n");
+        aur_pkgbases::download_pkgbases().unwrap_or_else(|error| {
+            eprintln!("Error: {error:?}");
+            process::exit(4);
+        });
     }
 
-    // Get the current list of AUR pkgbases
-    println!("Fetching AUR pkgbases list...\n");
-    let pkgbases = aur_pkgbases::current_pkgbases().unwrap_or_else(|error| {
+    // Load list of AUR pkgbases
+    println!("Loading AUR pkgbases list...\n");
+    let pkgbases = aur_pkgbases::load_pkgbases().unwrap_or_else(|error| {
         eprintln!("Error: {error:?}");
-        process::exit(4);
+        process::exit(5);
     });
 
     // Scan repo for matching patterns
