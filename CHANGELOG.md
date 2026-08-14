@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-- Add context to detailled output
+- Add context to detailed output
 - Add patterns with no occurrence found to the summary output
 
 ### Styling
