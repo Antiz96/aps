@@ -7,7 +7,7 @@ use reqwest::blocking::get;
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::fs;
-use std::io::Read;
+use std::io::{ErrorKind, Read};
 
 #[derive(Debug, Deserialize)]
 struct PackageMeta {
@@ -57,12 +57,17 @@ pub fn download_pkgbases() -> anyhow::Result<()> {
 
 // Get the cached AUR pkgbases, or download them first if the cache is not available
 pub fn load_pkgbases() -> anyhow::Result<HashSet<String>> {
-    let pkgbases = fs::read_to_string("pkgbases.txt")
-        .context("Failed to read AUR package metadata cache")
-        .or_else(|_| {
+    let content = match fs::read_to_string("pkgbases.txt") {
+        Ok(content) => content,
+        Err(error) if error.kind() == ErrorKind::NotFound => {
             download_pkgbases()?;
-            fs::read_to_string("pkgbases.txt").context("Failed to read AUR package metadata cache")
-        })?;
+            fs::read_to_string("pkgbases.txt")
+                .context("Failed to read AUR package metadata cache")?
+        }
+        Err(error) => {
+            return Err(error).context("Failed to read AUR package metadata cache");
+        }
+    };
 
-    Ok(pkgbases.lines().map(String::from).collect())
+    Ok(content.lines().map(String::from).collect())
 }
