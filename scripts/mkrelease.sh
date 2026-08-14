@@ -7,6 +7,12 @@ if [ "$(git branch --show-current)" != "main" ]; then
 	exit 1
 fi
 
+# Check that `github-cli` is correctly authenticated
+if ! gh auth status > /dev/null; then
+	echo -e >&2 "ERROR: github-cli is not authenticated"
+	exit 2
+fi
+
 # Pull repo and fetch tags
 git pull
 git fetch --tags
@@ -37,12 +43,16 @@ esac
 # Bump version where necessary
 sed_pattern="${latest_tag//./\\.}" # escape dots
 sed -i "s/version = \"${sed_pattern#v}\"/version = \"${release_tag}\"/g" Cargo.toml
-cargo update
+sed -i "s/${sed_pattern#v}/${release_tag}/g" doc/man/aps.1.scd
 
 # Build binary
 rm -rf target/
 repro-env update
 repro-env build -- cargo build --release --target x86_64-unknown-linux-musl
+
+# Update changelog
+git-cliff -up CHANGELOG.md
+sed -i "s|\[unreleased\]|\[v${release_tag}\](https://github.com/Antiz96/aps/releases/tag/v${release_tag})\ -\ $(date '+%Y-%m-%d')|g" CHANGELOG.md
 
 # Review changes
 git diff
@@ -62,23 +72,39 @@ esac
 
 # Create and push a signed commit
 git add .
-git commit -SFDC3040B92ACA748 -m "chore(release): v${release_tag}"
+git commit -SD33FAA16B937F3B2 -m "chore(release): v${release_tag}"
 git push
 
-
 # Create and push a signed tag
-git tag "v${release_tag}" -u FDC3040B92ACA748 -m "v${release_tag}"
+git tag "v${release_tag}" -u D33FAA16B937F3B2 -m "v${release_tag}"
 git push origin "v${release_tag}"
+
+# Create release
+echo -e "\nType (or paste) release notes, press ctrl+d when done\n"
+gh release create "v${release_tag}" --title "v${release_tag}" --verify-tag -F -
+
+# Download and sign auto-generated source tarball and checksum
+gh release download "v${release_tag}" --archive tar.gz --clobber
+gpg --local-user D33FAA16B937F3B2 --armor --detach-sign "aps-${release_tag}.tar.gz"
+sha256sum "aps-${release_tag}.tar.gz" > "aps-${release_tag}.tar.gz.sha256"
+gpg --local-user D33FAA16B937F3B2 --armor --detach-sign "aps-${release_tag}.tar.gz.sha256"
 
 # Sign binary and checksum
 mv target/x86_64-unknown-linux-musl/release/aps "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64"
-gpg --local-user FDC3040B92ACA748 --armor --detach-sign "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64"
+gpg --local-user D33FAA16B937F3B2 --armor --detach-sign "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64"
 sha256sum "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64" > "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256"
-gpg --local-user FDC3040B92ACA748 --armor --detach-sign "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256"
+gpg --local-user D33FAA16B937F3B2 --armor --detach-sign "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256"
 
-# Move artifacts to Download folder (to upload them to the release artifacts)
-cp -v "target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64"* ~/Downloads/
+# Upload assets
+gh release upload "v${release_tag}" \
+	"aps-${release_tag}.tar.gz.asc" \
+	"aps-${release_tag}.tar.gz.sha256" \
+	"aps-${release_tag}.tar.gz.sha256.asc" \
+	"target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64" \
+	"target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.asc" \
+	"target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256" \
+	"target/x86_64-unknown-linux-musl/release/aps-${release_tag}-x86_64.sha256.asc"
 
 # Cleanup
-rm -rf target/
+rm -rf "aps-${release_tag}.tar.gz"* target/
 podman image prune -af

@@ -14,10 +14,10 @@ pub fn show_help() {
     println!();
     println!("Options:");
     println!(
-        "  -r, --repo <path>       Path to the AUR read-only GitHub mirror bare clone (defaults to `$PWD/aur.git` if not set)"
+        "  -r, --repo <path>       Path to the AUR GitHub mirror clone (defaults to `$PWD/aur.git` if not set)"
     );
     println!(
-        "  -p, --patterns <path>   Path to the patterns list (defaults to `$PWD/patterns.txt` if not set)"
+        "  -p, --patterns <path>   Path to the patterns list to search for (defaults to `$PWD/patterns.txt` if not set)"
     );
     println!(
         "  -P, --pkgbases <path>   Path to the pkgbases list to search patterns for (defaults to `$PWD/pkgbases.txt` if not set)"
