@@ -20,9 +20,9 @@ All notable changes to this project will be documented in this file.
 ### Miscellaneous
 
 - *(patterns)* Update patterns list - ([b6e4d5c](https://github.com/Antiz96/aps/commit/b6e4d5c39fa962c34c2a446b3aeec0940a79fe3d)) by @Antiz96
-- *(perf)* Allow caching the pkgbases list in pkgbases.txt - ([76ee339](https://github.com/Antiz96/aps/commit/76ee33915845ce7e4eef18e041870237d0d327a9))
-- *(perf)* Search multithreaded (split by branch) - ([5942ff0](https://github.com/Antiz96/aps/commit/5942ff0da1340f32f0750ead27d3fb3b4d3efcd5))
-- *(perf)* Use aho_corasick to find patterns occurrences - ([b9e9279](https://github.com/Antiz96/aps/commit/b9e92792da39b07921de777da1aceeef172ee881))
+- *(perf)* Allow caching the pkgbases list in pkgbases.txt - ([76ee339](https://github.com/Antiz96/aps/commit/76ee33915845ce7e4eef18e041870237d0d327a9)) by @tippfehlr
+- *(perf)* Search multithreaded (split by branch) - ([5942ff0](https://github.com/Antiz96/aps/commit/5942ff0da1340f32f0750ead27d3fb3b4d3efcd5)) by @tippfehlr
+- *(perf)* Use aho_corasick to find patterns occurrences - ([b9e9279](https://github.com/Antiz96/aps/commit/b9e92792da39b07921de777da1aceeef172ee881)) by @tippfehlr
 - Move to GitHub - ([857d633](https://github.com/Antiz96/aps/commit/857d633c6a1e6c8d610b2c9d1455f932d599fa86)) by @Antiz96
 - Update patterns list - ([5cbdb26](https://github.com/Antiz96/aps/commit/5cbdb26ab2f3eda399e9e301defb2fdc38e05d0e)) by @Antiz96
 - Update patterns list - ([b82d9b6](https://github.com/Antiz96/aps/commit/b82d9b631266fb790e729d7f453a9fb40df22e04)) by @Antiz96
