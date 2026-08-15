@@ -91,6 +91,7 @@ dependencies = [
  "gix",
  "predicates",
  "rayon",
+ "regex",
  "reqwest",
  "serde",
  "serde_json",
