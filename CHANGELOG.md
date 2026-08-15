@@ -2,11 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [v1.3.0](https://github.com/Antiz96/aps/releases/tag/v1.3.0) - 2026-08-15
 
 ### Features
 
-- Add the new `-P / --pkgbases` and `-R / --refresh-pkgbases` flags - ([6434c85](https://github.com/Antiz96/aps/commit/6434c856243d6c8993b1e3c9f116b63f523c09ec)) by @Antiz96
+- *(patterns)* Add support for wildcard (`*`) expansion - ([3f1230c](https://github.com/Antiz96/aps/commit/3f1230c95f15f1d2182f737d3aec062654a5fbe5)) by @Antiz96
+- Add the new `-P / --pkgbases` and `-R / --refresh-pkgbases` flags - ([c68d847](https://github.com/Antiz96/aps/commit/c68d847863561a85b3e8981a72ed47877ffd75ba)) by @Antiz96
+
+### Fixes
+
+- *(results)* Print a message if there are no (detailed) results - ([9bd94da](https://github.com/Antiz96/aps/commit/9bd94dae7974efb7debc16f2d40fd30e62072f47)) by @Antiz96
 
 ### Styling
 
@@ -14,9 +19,11 @@ All notable changes to this project will be documented in this file.
 
 ### Miscellaneous
 
-- *(perf)* Allow caching the pkgbases list in pkgbases.txt - ([684b369](https://github.com/Antiz96/aps/commit/684b36991f4d85501663288e9a986aefc7311b4d))
-- *(perf)* Search multithreaded (split by branch) - ([e9ee775](https://github.com/Antiz96/aps/commit/e9ee775c4c89225bd2fe9386d1783f2119e53519))
+- *(patterns)* Update patterns list - ([b6e4d5c](https://github.com/Antiz96/aps/commit/b6e4d5c39fa962c34c2a446b3aeec0940a79fe3d)) by @Antiz96
+- *(perf)* Allow caching the pkgbases list in pkgbases.txt - ([76ee339](https://github.com/Antiz96/aps/commit/76ee33915845ce7e4eef18e041870237d0d327a9))
+- *(perf)* Search multithreaded (split by branch) - ([5942ff0](https://github.com/Antiz96/aps/commit/5942ff0da1340f32f0750ead27d3fb3b4d3efcd5))
 - *(perf)* Use aho_corasick to find patterns occurrences - ([b9e9279](https://github.com/Antiz96/aps/commit/b9e92792da39b07921de777da1aceeef172ee881))
+- Move to GitHub - ([857d633](https://github.com/Antiz96/aps/commit/857d633c6a1e6c8d610b2c9d1455f932d599fa86)) by @Antiz96
 - Update patterns list - ([5cbdb26](https://github.com/Antiz96/aps/commit/5cbdb26ab2f3eda399e9e301defb2fdc38e05d0e)) by @Antiz96
 - Update patterns list - ([b82d9b6](https://github.com/Antiz96/aps/commit/b82d9b631266fb790e729d7f453a9fb40df22e04)) by @Antiz96
 
