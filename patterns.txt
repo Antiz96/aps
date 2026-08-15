@@ -4,6 +4,7 @@ base64 --decode | bash
 | bash
 rm -rf
 sudo
+curl *|*sh
 
 # Malicious patterns and binary names used during recent attack waves
 sudo "$srcdir/optimizer"
