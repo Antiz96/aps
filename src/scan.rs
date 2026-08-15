@@ -1,9 +1,10 @@
 //! Scan repository for matching patterns
 
-use aho_corasick::{AhoCorasick, PatternID};
+use aho_corasick::AhoCorasick;
 use anyhow::Context;
 use gix::Repository;
 use rayon::prelude::*;
+use regex::RegexSet;
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::str;
@@ -14,10 +15,19 @@ pub struct Match {
     pub package: String,
     pub path: String,
     pub line: usize,
-    pub pattern: PatternID,
+    pub pattern: usize,
     pub context: Vec<(usize, String)>,
 }
 
+// Match literal patterns with Aho-Corasick and wildcard (`*`) patterns with regex
+struct PatternMatcher {
+    literal: AhoCorasick,
+    literal_pattern_ids: Vec<usize>,
+    wildcard: RegexSet,
+    wildcard_pattern_ids: Vec<usize>,
+}
+
+// Helper to get all branch refs (each pkgbase has its own branch refs)
 fn get_branch_refs(
     repo: &gix::Repository,
     pkgbases: &HashSet<String>,
@@ -51,13 +61,56 @@ fn get_branch_refs(
         .collect())
 }
 
+// Helper to turn wildcards (`*`) into regex pattern (`.*`)
+fn wildcard_to_regex(pattern: &str) -> String {
+    pattern
+        .split('*')
+        .map(regex::escape)
+        .collect::<Vec<_>>()
+        .join(".*")
+}
+
+// Helper to build context for the matches
+fn build_context(lines: &[&str], line_index: usize) -> Vec<(usize, String)> {
+    let start = line_index.saturating_sub(2);
+    let end = (line_index + 3).min(lines.len());
+
+    lines[start..end]
+        .iter()
+        .enumerate()
+        .map(|(index, content)| (start + index + 1, (*content).to_string()))
+        .collect()
+}
+
 pub fn scan_repo(
     repo: &gix::Repository,
     repo_path: &std::path::Path,
     pkgbases: &HashSet<String>,
     patterns: &[String],
 ) -> anyhow::Result<Vec<Match>> {
-    let ac = AhoCorasick::new(patterns)?;
+    // Split string sets between literal and regex sets
+    let literal_patterns: Vec<_> = patterns
+        .iter()
+        .enumerate()
+        .filter(|(_, pattern)| !pattern.contains('*'))
+        .collect();
+
+    let wildcard_patterns: Vec<_> = patterns
+        .iter()
+        .enumerate()
+        .filter(|(_, pattern)| pattern.contains('*'))
+        .collect();
+
+    let matcher = PatternMatcher {
+        literal: AhoCorasick::new(literal_patterns.iter().map(|(_, pattern)| pattern))?,
+        literal_pattern_ids: literal_patterns.iter().map(|(index, _)| *index).collect(),
+        wildcard: RegexSet::new(
+            wildcard_patterns
+                .iter()
+                .map(|(_, pattern)| wildcard_to_regex(pattern)),
+        )?,
+        wildcard_pattern_ids: wildcard_patterns.iter().map(|(index, _)| *index).collect(),
+    };
 
     // one Repository instance for every thread
     thread_local! {
@@ -110,7 +163,7 @@ pub fn scan_repo(
                 let mut matches = Vec::new();
                 // Silencing failure should be safe here, the most probable cause is a missing
                 // commit (resulting in a tree that cannot be loaded), which we already warned about above if needed
-                scan_tree(repo, &tree, package, "", &ac, &mut matches).ok()?;
+                scan_tree(repo, &tree, package, "", &matcher, &mut matches).ok()?;
                 Some(matches)
             })
         })
@@ -125,7 +178,7 @@ fn scan_tree(
     tree: &gix::Tree,
     package: &str,
     path: &str,
-    ac: &AhoCorasick,
+    matcher: &PatternMatcher,
     matches: &mut Vec<Match>,
 ) -> anyhow::Result<()> {
     // Iterate over the file tree
@@ -151,7 +204,7 @@ fn scan_tree(
                     .find_tree(entry.object_id())
                     .with_context(|| format!("Failed to read tree {entry_path}"))?;
 
-                scan_tree(repo, &subtree, package, &entry_path, ac, matches)?;
+                scan_tree(repo, &subtree, package, &entry_path, matcher, matches)?;
             }
 
             // If git object is a blob / file, load its content
@@ -170,25 +223,34 @@ fn scan_tree(
 
                 // Iterate over lines and test every patterns, record eventual matches
                 for (line_index, line) in lines.iter().enumerate() {
-                    for mat in ac.find_iter(line) {
-                        // Build context:
-                        // Include two lines before and two lines after the match.
-                        let line_number = line_index + 1;
-                        let start = line_index.saturating_sub(2);
-                        let end = (line_index + 3).min(lines.len());
+                    let line_number = line_index + 1;
 
-                        let context = lines[start..end]
-                            .iter()
-                            .enumerate()
-                            .map(|(index, content)| (start + index + 1, (*content).to_string()))
-                            .collect();
+                    // Literal string searches
+                    for mat in matcher.literal.find_iter(line) {
+                        // Build context
+                        let context = build_context(&lines, line_index);
 
                         // Push results fields
                         matches.push(Match {
                             package: package.to_string(),
                             path: entry_path.clone(),
                             line: line_number,
-                            pattern: mat.pattern(),
+                            pattern: matcher.literal_pattern_ids[mat.pattern().as_usize()],
+                            context,
+                        });
+                    }
+
+                    // Regex string searches (wildcard expansion)
+                    for wildcard_pattern in matcher.wildcard.matches(line) {
+                        // Build context
+                        let context = build_context(&lines, line_index);
+
+                        // Push results fields
+                        matches.push(Match {
+                            package: package.to_string(),
+                            path: entry_path.clone(),
+                            line: line_number,
+                            pattern: matcher.wildcard_pattern_ids[wildcard_pattern],
                             context,
                         });
                     }
