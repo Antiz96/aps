@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.1](https://github.com/Antiz96/aps/releases/tag/v1.3.1) - 2026-08-16
+
+### Documentation
+
+- Update documentation to reflect latest changes ([#8](https://github.com/Antiz96/aps/pull/8)) - ([d03be29](https://github.com/Antiz96/aps/commit/d03be291baf3070f04d132361e5f3a9c8cc20fe7)) by @Antiz96
+
+### Miscellaneous
+
+- *(patterns)* Update patterns list ([#9](https://github.com/Antiz96/aps/pull/9)) - ([0e32f3e](https://github.com/Antiz96/aps/commit/0e32f3efe7cf1838594db8356143c4ce3ec8a0b2)) by @Antiz96
+- Update changelog ([#7](https://github.com/Antiz96/aps/pull/7)) - ([3829d93](https://github.com/Antiz96/aps/commit/3829d93ea0cd7285e64b91cfb204d9bbaec35f0b)) by @Antiz96
+
 ## [v1.3.0](https://github.com/Antiz96/aps/releases/tag/v1.3.0) - 2026-08-15
 
 ### Features
