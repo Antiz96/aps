@@ -1,7 +1,7 @@
 # Suspicious patterns
-base64 -d | bash
-base64 --decode | bash
-| bash
+base64 -d*|*sh
+base64 --decode*|*sh
+|*bash
 rm -rf
 sudo
 curl *|*sh
