@@ -9,11 +9,14 @@ aps(1) ["APS 1.3.0" ["APS Manual"]]
 APS (*A*UR *P*atterns *S*earcher) is a fast and powerful patterns searcher for AUR package sources.
 It's a useful tool to get fast, automated and pro-active reports of the presence of knowingly suspicious / malicious patterns in AUR package files.
 
-It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance: `git clone --bare https://github.com/archlinux/aur.git`.
+It requires a clone of the AUR GitHub mirror.
+A bare clone is recommended for optimal scanning performance: `git clone --bare https://github.com/archlinux/aur.git`.
 
-Search patterns are read from a given file, one pattern per line. It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
+Search patterns are read from a given file, one pattern per line.
+It supports wildcard expansion. Lines starting with `#` are ignored.
 
-You can optionally provide the list of `pkgbases` to search patterns for. Otherwise, `aps` searches through every `pkgbases` by default.
+You can optionally provide the list of `pkgbases` to search patterns for.
+Otherwise, `aps` searches through every `pkgbases` by default.
 
 # SYNOPSIS
 
