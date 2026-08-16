@@ -19,9 +19,10 @@ It requires a clone of the AUR GitHub mirror. A bare clone is recommended for op
 `git clone --bare https://github.com/archlinux/aur.git`.
 
 Search patterns are read from a given file, one pattern per line.  
-Lines starting with `#` are ignored.
+It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
 
-You can optionally provide the list of `pkgbases` to search patterns for.
+You can optionally provide a specific list of `pkgbases` to search patterns for.  
+Otherwise, `aps` searches through every `pkgbases` by default.
 
 ## Installation
 
@@ -76,9 +77,10 @@ It requires a clone of the AUR GitHub mirror. A bare clone is recommended for op
 `git clone --bare https://github.com/archlinux/aur.git`
 
 Search patterns are read from a given file, one pattern per line.  
-Lines starting with `#` are ignored.
+It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
 
-You can optionally provide the list of `pkgbases` to search patterns for.
+You can optionally provide a specific list of `pkgbases` to search patterns for.  
+Otherwise, `aps` searches through every `pkgbases` by default.
 
 See `aps --help`, the [aps(1) man page](https://raw.githubusercontent.com/Antiz96/aps/refs/heads/main/doc/man/aps.1.scd) for more details.
 

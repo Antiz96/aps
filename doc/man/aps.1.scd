@@ -12,9 +12,10 @@ It's a useful tool to get fast, automated and pro-active reports of the presence
 It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance: `git clone --bare https://github.com/archlinux/aur.git`.
 
 Search patterns are read from a given file, one pattern per line.  
-Lines starting with `#` are ignored.
+It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
 
 You can optionally provide the list of `pkgbases` to search patterns for.
+Otherwise, `aps` searches through every `pkgbases` by default.
 
 # SYNOPSIS
 

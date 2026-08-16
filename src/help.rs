@@ -10,7 +10,10 @@ pub fn show_help() {
     println!("`git clone --bare https://github.com/archlinux/aur.git`");
     println!();
     println!("Search patterns are read from a given file, one pattern per line.");
-    println!("Lines starting with `#` are ignored.");
+    println!("It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.");
+    println!();
+    println!("You can optionally provide a specific list of `pkgbases` to search patterns for.");
+    println!("Otherwise `aps` searches through every `pkgbases` by default).");
     println!();
     println!("Options:");
     println!(
