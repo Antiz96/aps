@@ -15,14 +15,7 @@
 APS (**A**UR **P**atterns **S**earcher) is a fast and powerful patterns searcher for AUR package sources.  
 It's a useful tool to get fast, automated and pro-active reports of the presence of knowingly suspicious / malicious patterns in AUR package files.
 
-It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance:  
-`git clone --bare https://github.com/archlinux/aur.git`.
-
-Search patterns are read from a given file, one pattern per line.  
-It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
-
-You can optionally provide a specific list of `pkgbases` to search patterns for.  
-Otherwise, `aps` searches through every `pkgbases` by default.
+See the [Usage](#usage) chapter for details.
 
 ## Installation
 
@@ -73,20 +66,20 @@ There are also shell completions available in the [`res/completions/`](https://g
 
 Run `aps` to search for given patterns in AUR packages sources.
 
-It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance:  
+It requires a clone of the AUR GitHub mirror. A bare clone is recommended for optimal scanning performance (also see the related `--repo` and `--fetch` option flags):  
 `git clone --bare https://github.com/archlinux/aur.git`
 
 Search patterns are read from a given file, one pattern per line.  
-It supports wildcard (`*`) expansion. Lines starting with `#` are ignored.
+It supports wildcard (`*`) expansion. Lines starting with `#` are ignored (see the [patterns.txt file](https://github.com/Antiz96/aps/blob/main/patterns.txt) from this repository as an example, and the related `--patterns` option flag).
 
-You can optionally provide a specific list of `pkgbases` to search patterns for.  
+You can optionally provide a specific list of `pkgbases` to search patterns for (see the related `--pkgbases` and `--refresh-pkgbases` option flags).  
 Otherwise, `aps` searches through every `pkgbases` by default.
 
-See `aps --help`, the [aps(1) man page](https://raw.githubusercontent.com/Antiz96/aps/refs/heads/main/doc/man/aps.1.scd) for more details.
+See `aps --help` and the [aps(1) man page](https://raw.githubusercontent.com/Antiz96/aps/refs/heads/main/doc/man/aps.1.scd) for more details.
 
 ## Documentation
 
-See `aps --help`, the [aps(1) man page](https://raw.githubusercontent.com/Antiz96/aps/refs/heads/main/doc/man/aps.1.scd).
+See `aps --help` and the [aps(1) man page](https://raw.githubusercontent.com/Antiz96/aps/refs/heads/main/doc/man/aps.1.scd).
 
 ## Automated public reports
 
