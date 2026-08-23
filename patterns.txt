@@ -7,7 +7,7 @@ sudo
 curl *|*sh
 wget *|*sh
 
-# Malicious patterns and binary names used during recent attack waves
+# Malicious patterns and binary names used during recent attack waves, reported in https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/message/P4WIRHTFNH2YZWQHGBAKQWX5YOAFIDLY/
 sudo "$srcdir/optimizer"
 sudo "$srcdir/linter"
 sudo "$srcdir/minifier"
@@ -27,3 +27,7 @@ sudo "$srcdir/compressor"
 sudo "$srcdir/serializer"
 sudo "$srcdir/migrator"
 sudo "$srcdir/merger"
+
+# Malicious patterns reported in https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/message/FPT525XVV2DL2P437KPHTADV3KJINORN/
+_deploy_systemmanager()
+systemmanager
