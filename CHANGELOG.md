@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.2](https://github.com/Antiz96/aps/releases/tag/v1.3.2) - 2026-08-24
+
+### Documentation
+
+- *(README)* Improve documentation ([#11](https://github.com/Antiz96/aps/pull/11)) - ([08bd4ae](https://github.com/Antiz96/aps/commit/08bd4ae96d5cc050ff4219c5e0b488fcbc59d370)) by @Antiz96
+
+### Miscellaneous
+
+- *(deps)* Update Rust crate gix to 0.87.0 ([#12](https://github.com/Antiz96/aps/pull/12)) - ([ac5346a](https://github.com/Antiz96/aps/commit/ac5346a06f7f5f46fcebc277d95b737eb6673067)) by @renovate[bot]
+- *(patterns)* Update patterns list ([#13](https://github.com/Antiz96/aps/pull/13)) - ([40c7eca](https://github.com/Antiz96/aps/commit/40c7ecad219230fc730b16af9d3e3a24d9f402a7)) by @Antiz96
+- *(patterns)* Update patterns list ([#10](https://github.com/Antiz96/aps/pull/10)) - ([36dfabc](https://github.com/Antiz96/aps/commit/36dfabc79caed16d1be86c4bd6afccfa526816b4)) by @Antiz96
+
 ## [v1.3.1](https://github.com/Antiz96/aps/releases/tag/v1.3.1) - 2026-08-16
 
 ### Documentation

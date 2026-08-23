@@ -1,4 +1,4 @@
-aps(1) ["APS 1.3.1" ["APS Manual"]]
+aps(1) ["APS 1.3.2" ["APS Manual"]]
 
 # NAME
 
