@@ -31,3 +31,4 @@ sudo "$srcdir/merger"
 # Malicious patterns reported in https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/message/FPT525XVV2DL2P437KPHTADV3KJINORN/
 systemmanager
 .$pkgname.install
+install=.
