@@ -183,7 +183,7 @@ fn scan_tree(
 ) -> anyhow::Result<()> {
     // Iterate over the file tree
     for entry in tree.iter() {
-        let entry = entry.context("Failed to read tree entry")?;
+        let entry = entry.map_err(|error| anyhow::anyhow!("Failed to read tree entry: {error}"))?;
 
         // Extract and convert filename to string
         let entry_name = entry.filename().to_string();

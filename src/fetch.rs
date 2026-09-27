@@ -25,7 +25,7 @@ pub fn fetch_repo(repo: &gix::Repository) -> anyhow::Result<()> {
             "+refs/heads/*:refs/heads/*".into(),
             refspec::parse::Operation::Fetch,
         )
-        .context("Failed to parse fetch refspec")?
+        .map_err(|error| anyhow::anyhow!("Failed to parse fetch refspec: {error}"))?
         .into(),
     );
 
