@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.3](https://github.com/Antiz96/aps/releases/tag/v1.3.3) - 2026-10-05
+
+### Miscellaneous
+
+- *(deps)* Lock file maintenance ([#26](https://github.com/Antiz96/aps/pull/26)) - ([8e577d0](https://github.com/Antiz96/aps/commit/8e577d06844aebd8cb12885e3fdf419dbe07743f)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#25](https://github.com/Antiz96/aps/pull/25)) - ([366db6b](https://github.com/Antiz96/aps/commit/366db6ba6f30eebf5a5efa9fe73eb6dc067b60b5)) by @renovate[bot]
+- *(deps)* Update Rust crate gix to 0.88.0 ([#24](https://github.com/Antiz96/aps/pull/24)) - ([79e7973](https://github.com/Antiz96/aps/commit/79e7973372c23615c4ef51f9104d23c9476344c8)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#23](https://github.com/Antiz96/aps/pull/23)) - ([7e1683a](https://github.com/Antiz96/aps/commit/7e1683a0e1e69bc43acf558b2c1dca45a2f3355d)) by @renovate[bot]
+- *(deps)* Update Rust crate clap to 4.6.7 ([#22](https://github.com/Antiz96/aps/pull/22)) - ([d2f6e51](https://github.com/Antiz96/aps/commit/d2f6e513111cd083deaf1700d30aa7c94ce73847)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#21](https://github.com/Antiz96/aps/pull/21)) - ([d453741](https://github.com/Antiz96/aps/commit/d4537415f8d96859e2d831ba3e52995b718d5ac4)) by @renovate[bot]
+- *(deps)* Update Rust crate reqwest to 0.13.5 ([#20](https://github.com/Antiz96/aps/pull/20)) - ([ad379af](https://github.com/Antiz96/aps/commit/ad379af0204f5e1ea61e16614b0996525dcacd61)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#19](https://github.com/Antiz96/aps/pull/19)) - ([abad26e](https://github.com/Antiz96/aps/commit/abad26e9336aaea3d6b7d425204d58f788498d44)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#18](https://github.com/Antiz96/aps/pull/18)) - ([911381e](https://github.com/Antiz96/aps/commit/911381e8b11edbdab06ef56fcc172c1ef9fa69d7)) by @renovate[bot]
+- *(deps)* Update Rust crate flate2 to 1.1.10 ([#17](https://github.com/Antiz96/aps/pull/17)) - ([9acf10e](https://github.com/Antiz96/aps/commit/9acf10e98cf8c6e7b225cb2d4f07050cba479644)) by @renovate[bot]
+- *(deps)* Update Rust crate gix to 0.87.1 ([#16](https://github.com/Antiz96/aps/pull/16)) - ([ba55d65](https://github.com/Antiz96/aps/commit/ba55d65daeb8ddf291cea1ca4371890a5178959e)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#14](https://github.com/Antiz96/aps/pull/14)) - ([f856f9a](https://github.com/Antiz96/aps/commit/f856f9a3f0b0d40739e94eb9c5eb8902bf8616bd)) by @renovate[bot]
+- *(patterns)* Update patterns list ([#15](https://github.com/Antiz96/aps/pull/15)) - ([56320be](https://github.com/Antiz96/aps/commit/56320bee7a15d90080eca75f8d20e06e581ba87a)) by @Antiz96
+
 ## [v1.3.2](https://github.com/Antiz96/aps/releases/tag/v1.3.2) - 2026-08-24
 
 ### Documentation
