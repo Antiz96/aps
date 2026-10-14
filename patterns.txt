@@ -4,6 +4,8 @@ base64 --decode*|*sh
 |*bash
 rm -rf
 sudo
+*sh <(curl
+*sh <(wget
 curl *|*sh
 wget *|*sh
 
