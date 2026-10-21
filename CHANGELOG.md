@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.4](https://github.com/Antiz96/aps/releases/tag/v1.3.4) - 2026-10-21
+
+### Miscellaneous
+
+- *(CONTRIBUTING)* Add an AI Policy ([#31](https://github.com/Antiz96/aps/pull/31)) - ([c576613](https://github.com/Antiz96/aps/commit/c576613457efb8c6576bcc9e9120accd23da122e)) by @Antiz96
+- *(deps)* Lock file maintenance ([#35](https://github.com/Antiz96/aps/pull/35)) - ([ab42208](https://github.com/Antiz96/aps/commit/ab422089b130fd511887c3826d6d9b1eafbd2091)) by @Antiz96
+- *(deps)* Lock file maintenance ([#33](https://github.com/Antiz96/aps/pull/33)) - ([ef960a1](https://github.com/Antiz96/aps/commit/ef960a1e5422dc499551f2f8d55f5963f307ee6f)) by @renovate[bot]
+- *(deps)* Lock file maintenance ([#30](https://github.com/Antiz96/aps/pull/30)) - ([04c1158](https://github.com/Antiz96/aps/commit/04c1158404afe5dbaccd8a2a90a28d7fff4d3d42)) by @renovate[bot]
+- *(deps)* Update Rust crate serde_json to 1.0.154 ([#29](https://github.com/Antiz96/aps/pull/29)) - ([f17b798](https://github.com/Antiz96/aps/commit/f17b79888eb1e1d3e26f0c9e0a8dcbec8c06aa58)) by @renovate[bot]
+- *(deps)* Update Rust crate serde_json to 1.0.152 ([#28](https://github.com/Antiz96/aps/pull/28)) - ([d32e94d](https://github.com/Antiz96/aps/commit/d32e94d0fa94692017006b1855e333f040d1a7a3)) by @renovate[bot]
+- *(deps)* Update Rust crate gix to 0.89.0 ([#27](https://github.com/Antiz96/aps/pull/27)) - ([5dcf03f](https://github.com/Antiz96/aps/commit/5dcf03fdf69ca0f3a2191287ae412e0a13815a52)) by @renovate[bot]
+- *(patterns)* Update patterns list ([#32](https://github.com/Antiz96/aps/pull/32)) - ([61f345c](https://github.com/Antiz96/aps/commit/61f345cb4a3e2be520b00472e154e4919ead8124)) by @Antiz96
+
 ## [v1.3.3](https://github.com/Antiz96/aps/releases/tag/v1.3.3) - 2026-10-05
 
 ### Miscellaneous
