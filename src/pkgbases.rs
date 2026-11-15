@@ -3,7 +3,7 @@
 
 use anyhow::Context;
 use flate2::read::GzDecoder;
-use reqwest::blocking::get;
+use reqwest::blocking::Client;
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::fs;
@@ -21,8 +21,21 @@ pub fn download_pkgbases(pkgbases_path: &Path) -> anyhow::Result<HashSet<String>
     // AUR packages metadata URL
     let url = String::from("https://aur.archlinux.org/packages-meta-v1.json.gz");
 
+    // Build an HTTP client with a specific User-Agent
+    // to avoid triggering Anubis protection
+    let client = Client::builder()
+        .user_agent(concat!(
+            env!("CARGO_PKG_NAME"),
+            "/",
+            env!("CARGO_PKG_VERSION")
+        ))
+        .build()
+        .context("Failed to create HTTP client")?;
+
     // Download AUR packages metadata json file
-    let response = get(&url)
+    let response = client
+        .get(&url)
+        .send()
         .context("Failed to download AUR package metadata")?
         .error_for_status()
         .context("AUR package metadata request failed")?;
@@ -32,7 +45,7 @@ pub fn download_pkgbases(pkgbases_path: &Path) -> anyhow::Result<HashSet<String>
         .bytes()
         .context("Failed to read AUR package metadata")?;
 
-    // Decompresse and parse the json content
+    // Decompress and parse the json content
     let mut decoder = GzDecoder::new(&compressed_content[..]);
     let mut json_parser = String::new();
 
